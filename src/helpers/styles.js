@@ -112,6 +112,6 @@ export const globalStyles = StyleSheet.create({
     },
     safeAreaView:{
         paddingTop: Constants.statusBarHeight + 5,
-        marginHorizontal: width*0.1,
+        paddingHorizontal: width*0.1,
     }
 })

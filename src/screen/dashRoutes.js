@@ -23,7 +23,7 @@ export default () => {
       }}
       
       tabBar={(props) => <MyTabBar {...props} />}
-      initialRouteName="home"
+      initialRouteName="search"
     >
       <Tab.Screen
         name="home"
