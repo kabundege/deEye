@@ -7,7 +7,7 @@ export const colors = {
     primary:'#4937C5',
     secondary:'#C04E4A',
     lightIcon:'#555',
-    strongIcon:'rgb(172, 172, 172)',
+    strongIcon:'#888',
     focusedIcon:"#999",
     success:'rgba(5, 150, 105,1)',
     error:'crimson',

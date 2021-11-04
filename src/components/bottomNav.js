@@ -76,7 +76,8 @@ export default function MyTabBar({ state, descriptors, navigation }) {
 
 const styles = StyleSheet.create({
   bottomSheet: {
-    paddingBottom: 30,
+    paddingVertical: 5,
+    paddingBottom: 20,
     width: "100%",
     backgroundColor: "transparent",
     borderTopWidth: 0,
@@ -84,5 +85,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+    backgroundColor:"whitesmoke",
+    ...globalStyles.shadow,
+    shadowOpacity:.5,
+    elevation:3
   },
 });

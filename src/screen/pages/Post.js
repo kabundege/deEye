@@ -1,11 +1,13 @@
 import { AntDesign, Feather, FontAwesome5 } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useEffect, useState } from 'react'
-import { View, Text,StyleSheet, KeyboardAvoidingView, TouchableOpacity, Image, Dimensions, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { View, Text,StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native'
 import InputField from '../../components/input';
 import { StoreContext } from '../../config/store';
 import { colors } from '../../helpers/colors';
 import { globalStyles } from '../../helpers/styles';
+import moment from 'moment';
+import "moment-timezone";
 
 const { height,width } = Dimensions.get('screen')
 
@@ -17,31 +19,39 @@ const Section = ({label,info}) => (
 )
 
 export default function PostScreen({ navigation,route }) {
-    const { comments } = useContext(StoreContext)
+    const { comments,views,handlerContext,user } = useContext(StoreContext)
     const [ showModal,setModal ] = useState(false)
     const [ allComents,setComents ] = useState([])
     const [ newComment,setComment ] = useState(null)
-    // const { data } = route.params;
-    const data = {
-        "age": 20,
-        "complexion": "Dark",
-        "creator_id": 5,
-        "description": "Cupidatat id magna dolore consectetur excepteur nisi eiusmod. Excepteur elit duis nulla ipsum ut enim laboris sunt adipisicing proident aliqua ullamco do aute. Ullamco voluptate velit tempor anim minim elit minim.",
-        "gender": "Female",
-        "id": 1,
-        "image": "https://picsum.photos/200/300",
-        "index": 3,
-        "location": "Kigali, Rwanda",
-        "name": "Jogn Doe",
-        "nationality": "Rwandan",
-        "phoneNumber": "+250789123456",
-        "status": "active",
-        "type": "lost",
-      }
-    
+    const { data } = route.params;
+
     useEffect(()=>setComents(comments),[comments]);
 
+    useEffect(()=>{
+        const exists = views.find(one => one.story_id === data.id)
+        if(!exists){
+            const newView = {
+                id:views.length+1,
+                story_id:data.id,
+            }
+            handlerContext('views', [ ...views,newView ])
+        }
+    },[])
+
     const toggleModal = () => setModal(!showModal);
+
+    const submitComment = () => {
+        const payload = {
+            content: newComment,
+            id:comments.length+1,
+            creator:user,
+            creator_id:user.id,
+            story_id:data.id,
+            timeStamp:Date.now(),
+        }
+        handlerContext('comments',[ payload,...comments ])
+        setComment(null)
+    }
 
     return (
         <View style={styles.screen}>
@@ -82,17 +92,42 @@ export default function PostScreen({ navigation,route }) {
                         <View style={styles.body}>
                             <View style={[globalStyles.flexed,{ backgroundColor:"whitesmoke" }]}>
                                 <InputField
-                                    value={comments}
+                                    value={newComment}
                                     placeholder="Write Your Comment..."
-                                    type="default"
                                     styles={styles.textArea}
                                     multiple={true}
-                                    onChange={(value) => setComment(value)}
-                                    iconRight={<Text style={styles.post} >Post</Text>}
+                                    onChange={(value) =>{ 
+                                        if(value) setComment(value) 
+                                        else setComment(null)
+                                    }}
+                                    iconRight={
+                                        <View style={[globalStyles.flexed,{ marginTop:5 }]}>
+                                            {
+                                                newComment &&
+                                                <TouchableOpacity style={{marginRight:10}} onPress={()=>setComment(null)} >
+                                                    <AntDesign color={colors.dimeText} name="close" size={25} />
+                                                </TouchableOpacity>
+                                            }
+                                            <TouchableOpacity onPress={submitComment}>
+                                                <Text style={styles.post} >Post</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    }
                                 />
                             </View>
-                            <View style={styles.msgs}>
-                            </View>
+                            <ScrollView showsVerticalScrollIndicator={false} style={styles.msgs} >
+                                {
+                                    React.Children.toArray(
+                                        allComents.map(one =>
+                                            <View style={styles.comment}>
+                                                <Text style={styles.commentName}>{one.creator.name}</Text>
+                                                <Text style={styles.commentContent}>{one.content}</Text>
+                                                <Text style={styles.timeStamp}>{moment(one.timestamp).fromNow()}</Text>
+                                            </View>
+                                        )
+                                    )
+                                }
+                            </ScrollView>
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
@@ -102,6 +137,24 @@ export default function PostScreen({ navigation,route }) {
 }
 
 const styles = StyleSheet.create({
+    timeStamp:{
+        textAlign:"right",
+        marginTop:5
+    },
+    commentContent:{
+        fontFamily:"Regular",
+        color:colors.mutedText,
+        marginVertical:'2%'
+    },
+    commentName:{
+        fontFamily:"SemiBold",
+        color:colors.mainText,
+    },
+    comment:{
+        backgroundColor:'whitesmoke',
+        marginVertical:'3%',
+        padding:'5%'
+    },
     textArea:{
         backgroundColor:"whitesmoke",
         alignItems:"flex-start",

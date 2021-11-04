@@ -21,6 +21,8 @@
     "expo-linear-gradient": "~10.0.3",
     "expo-network": "~4.0.3",
     "expo-status-bar": "~1.1.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
     "node-fetch": "^2.6.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",

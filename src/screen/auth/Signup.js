@@ -7,7 +7,7 @@ import InputField from '../../components/input'
 import { Feather } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Login } from '../../API/user'
-import { SimpleCancelableNotification, SimpleNotification } from '../../components/alert'
+import { SimpleNotification } from '../../components/alert'
 
 const { width, height } = Dimensions.get('screen')
 

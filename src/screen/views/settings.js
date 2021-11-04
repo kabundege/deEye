@@ -8,13 +8,21 @@ import { colors } from '../../helpers/colors';
 import { globalStyles } from '../../helpers/styles';
 
 export default function Settings ({ navigation }) {
-    const { user,posts,comments } = useContext(StoreContext);
-    const [ creds,setCreds ] = useState({ allPosts:0,allComments:0,views:0 });
-    const { allPosts,allComments,views } = creds;
+    const { user,posts,comments,views } = useContext(StoreContext);
+    const [ creds,setCreds ] = useState({ allPosts:0,allComments:0,allViews:0 });
+    const { allPosts,allComments,allViews } = creds;
 
     useEffect(()=>{
-        const posts = () => {} 
-    },[])
+        setCreds(() => {
+            const currentPosts = posts.filter( one => one.creator_id == user.id );
+            const currentComments = comments.filter( one => one.creator_id == user.id );
+            return {
+                allPosts: currentPosts.length,
+                allComments: currentComments.length,
+                allViews: views.length,
+            }
+        })
+    },[posts,comments,views])
 
     const logout = () => {
         AsyncStorage.clear()
@@ -43,7 +51,7 @@ export default function Settings ({ navigation }) {
                     </View>
                     <View style={styles.wrapper}>
                         <Text style={styles.label}>Views</Text>
-                        <Text style={styles.value}>{views}</Text>
+                        <Text style={styles.value}>{allViews}</Text>
                     </View>
                 </View>
                 <View style={[globalStyles.flexed,{ marginTop:"10%" }]}>

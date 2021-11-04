@@ -11,8 +11,8 @@ import { SimpleCancelableNotification, SimpleNotification } from '../../componen
 const { width, height } = Dimensions.get('screen')
 
 const LoginScreen = ({ navigation }) => {
-  const [creds, setCreds] = useState({ hidePassword: true,showModal:false })
-  const { phoneNumber, password, hidePassword, loading, showModal } = creds;
+  const [creds, setCreds] = useState({ hidePassword: true })
+  const { phoneNumber, password, hidePassword, loading } = creds;
 
   const handlerSubmit = () => {
     // there's no action pending, then we should act
