@@ -25,7 +25,7 @@ export default function PostScreen({ navigation,route }) {
     const [ newComment,setComment ] = useState(null)
     const { data } = route.params;
 
-    useEffect(()=>setComents(comments),[comments]);
+    useEffect(()=>setComents(comments.filter(one => one.story_id === data.id )),[comments]);
 
     useEffect(()=>{
         const exists = views.find(one => one.story_id === data.id)
@@ -120,7 +120,7 @@ export default function PostScreen({ navigation,route }) {
                                     React.Children.toArray(
                                         allComents.map(one =>
                                             <View style={styles.comment}>
-                                                <Text style={styles.commentName}>{one.creator.name}</Text>
+                                                <Text style={styles.commentName}>{one.creator?.name}</Text>
                                                 <Text style={styles.commentContent}>{one.content}</Text>
                                                 <Text style={styles.timeStamp}>{moment(one.timestamp).fromNow()}</Text>
                                             </View>

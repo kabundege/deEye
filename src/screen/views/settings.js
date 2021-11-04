@@ -55,9 +55,12 @@ export default function Settings ({ navigation }) {
                     </View>
                 </View>
                 <View style={[globalStyles.flexed,{ marginTop:"10%" }]}>
-                    <Text style={styles.logout}>Sign Out</Text>
+                    <View style={globalStyles.flexed}>
+                        <Feather name="log-out" size={20} color={colors.dimeText} style={{marginRight:5}} />
+                        <Text style={styles.logout}>Sign Out</Text>
+                    </View>
                     <TouchableOpacity onPress={logout} style={styles.btn}>
-                        <Feather name="log-out" color={"white"} size={25} />
+                        <Feather name="chevron-right" color={"white"} size={25} />
                     </TouchableOpacity>
                 </View>
             </View>
