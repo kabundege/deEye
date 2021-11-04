@@ -13,14 +13,14 @@ const { width, height } = Dimensions.get('screen')
 
 const SignUpScreen = ({ navigation }) => {
   const [creds, setCreds] = useState({ hidePassword: true })
-  const { email, phoneNumber, password, hidePassword, loading } = creds;
+  const { name, phoneNumber, password, hidePassword, loading } = creds;
 
   const handlerSubmit = () => {
     // there's no action pending, then we should act
     if (!loading) {
-      if (email && password && phoneNumber) {
+      if (name && password && phoneNumber) {
         setCreds({ ...creds, loading: true })
-        Login({ email, password, phoneNumber })
+        Login({ name, password, phoneNumber })
           .then(async res => {
             setCreds({ ...creds, loading: false })
             if (res.statusCode === 200) {
@@ -62,11 +62,11 @@ const SignUpScreen = ({ navigation }) => {
                 <Text style={styles.mainText}> Hey, {'\n'} Register. </Text>
                 <View style={styles.form}>
                     <InputField
-                      value={email}
-                      placeholder="Email"
-                      type="email-address"
-                      iconLeft={<Feather name='mail' size={25} color={colors.lightIcon} />}
-                      onChange={(value) => handlerChange('email', value)}
+                      value={name}
+                      placeholder="Full Name"
+                      type="default"
+                      iconLeft={<Feather name='user' size={25} color={colors.lightIcon} />}
+                      onChange={(value) => handlerChange('name', value)}
                     />
                     <InputField
                       value={phoneNumber}

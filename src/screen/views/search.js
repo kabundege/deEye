@@ -1,7 +1,7 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather,AntDesign } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useEffect } from 'react'
-import { View, Text,StyleSheet, ActivityIndicator, FlatList, Dimensions, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import { View, Text,StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Dimensions, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler';
 import { useState } from 'react/cjs/react.development';
 import Post from '../../components/Post';
@@ -47,7 +47,13 @@ export default function Search ({ navigation }) {
                             style={styles.input}
                             value={query}
                             onChangeText={(value) =>setQuery(value.toLowerCase())} />
-                        <Feather name="search" size={30} color={colors.mainText} style={{opacity:.2}} />
+                        {
+                            !query ?
+                            <Feather name="search" size={30} color={colors.mainText} style={{opacity:.2}} /> :
+                            <TouchableOpacity onPress={()=>setQuery(null)}>
+                                <AntDesign name="close" size={30} color={'white'} style={{opacity:.8}} /> 
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
                 <View style={globalStyles.centerd}>

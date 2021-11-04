@@ -7,7 +7,11 @@ class StoreProvider extends Component{
         super(props)
         this.state = {
             theme:'light',
-            user:null,
+            user:{
+                name:"Christopher K. Kabundege",
+                phoneNumber:'0784524295',
+                id:1
+            },
             posts:[
                 {
                     id: 1,
@@ -80,7 +84,8 @@ class StoreProvider extends Component{
                     "location":"Kigali, Rwanda",
                     "nationality":"Rwandan"
                 },
-            ]
+            ],
+            
         }
     }
 

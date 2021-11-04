@@ -6,14 +6,19 @@ const { width,height } = Dimensions.get('screen')
 export const borderRadius = 15
 
 export const globalStyles = StyleSheet.create({
+    divider:{
+        width:"100%",
+        borderBottomWidth:2,
+        borderBottomColor:colors.mutedText
+    },
     blobCircle:{
         position:'absolute',
-        width:width*0.8,
-        height:width*0.8,
+        width:width*0.85,
+        height:width*0.85,
         borderRadius:width*0.8,
         backgroundColor:colors.primary,
-        top:0,
-        left:-width*0.3
+        top:-height*0.01,
+        left:-width*0.25
     },
     topFadder:{
         width:'100%',

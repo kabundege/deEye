@@ -12,16 +12,15 @@ const { width, height } = Dimensions.get('screen')
 const ForgotScreen = ({ navigation }) => {
   const [creds, setCreds] = useState({ success:false })
 
-  const { email, loading, success } = creds;
+  const { phoneNumber, loading, success } = creds;
 
   const handlerSubmit = () => {
     // there's no action pending, then we should act
     if (!loading) {
-      if (email) {
+      if (phoneNumber) {
         setCreds({ ...creds, loading: true })
-        ForgotPassword({ email })
+        ForgotPassword({ phoneNumber })
           .then(async res => {
-            console.log(res);
             setCreds({ ...creds, loading: false })
             if (res.status === 200) {
               setCreds(prevCreds=>({ ...prevCreds,success:true }))
@@ -68,11 +67,11 @@ const ForgotScreen = ({ navigation }) => {
               </Text>
               <View style={styles.form}>
                   <InputField
-                    value={email}
-                    placeholder="Email"
-                    type="email-address"
-                    iconLeft={<Feather name='mail' size={25} color={colors.lightIcon} />}
-                    onChange={(value) => handlerChange('email', value)}
+                    value={phoneNumber}
+                    placeholder="Phone Number"
+                    type="numeric"
+                    iconLeft={<Feather name='phone' size={25} color={colors.lightIcon} />}
+                    onChange={(value) => handlerChange('phoneNumber', value)}
                   />
                   <TouchableOpacity onPress={handlerSubmit} style={[globalStyles.btn, styles.btn,{ backgroundColor: success ? colors.success : colors.primary }]}>
                     <Text style={[globalStyles.btnText,{ color: "white" , fontSize: 15 }]}>

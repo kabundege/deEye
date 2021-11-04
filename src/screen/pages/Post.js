@@ -1,8 +1,8 @@
-import { FontAwesome5 } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import { AntDesign, Feather, FontAwesome5 } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
-import React, { useContext } from 'react'
-import { View, Text,StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { View, Text,StyleSheet, KeyboardAvoidingView, TouchableOpacity, Image, Dimensions, ScrollView, TouchableWithoutFeedback, Keyboard } from 'react-native'
+import InputField from '../../components/input';
 import { StoreContext } from '../../config/store';
 import { colors } from '../../helpers/colors';
 import { globalStyles } from '../../helpers/styles';
@@ -17,8 +17,32 @@ const Section = ({label,info}) => (
 )
 
 export default function PostScreen({ navigation,route }) {
-    const { data } = route.params;
-    const { user } = useContext(StoreContext)
+    const { comments } = useContext(StoreContext)
+    const [ showModal,setModal ] = useState(false)
+    const [ allComents,setComents ] = useState([])
+    const [ newComment,setComment ] = useState(null)
+    // const { data } = route.params;
+    const data = {
+        "age": 20,
+        "complexion": "Dark",
+        "creator_id": 5,
+        "description": "Cupidatat id magna dolore consectetur excepteur nisi eiusmod. Excepteur elit duis nulla ipsum ut enim laboris sunt adipisicing proident aliqua ullamco do aute. Ullamco voluptate velit tempor anim minim elit minim.",
+        "gender": "Female",
+        "id": 1,
+        "image": "https://picsum.photos/200/300",
+        "index": 3,
+        "location": "Kigali, Rwanda",
+        "name": "Jogn Doe",
+        "nationality": "Rwandan",
+        "phoneNumber": "+250789123456",
+        "status": "active",
+        "type": "lost",
+      }
+    
+    useEffect(()=>setComents(comments),[comments]);
+
+    const toggleModal = () => setModal(!showModal);
+
     return (
         <View style={styles.screen}>
             <StatusBar style="dark" backgroundColor="white" />
@@ -39,23 +63,92 @@ export default function PostScreen({ navigation,route }) {
                 </View>
                 <Section label="Case Status" info={data.status} />
                 <Section label="Telephone" info={data.phoneNumber} />
-                <View style={[globalStyles.flexed,styles.btns]}>
-                    <TouchableOpacity style={[globalStyles.btn,styles.btn,{ backgroundColor:'white' }]}>
-                        <Text style={[globalStyles.btnText,styles.btnText,{ color:colors.primary }]}>Report</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[globalStyles.btn,styles.btn]}>
-                        <Text style={[globalStyles.btnText,styles.btnText]}>Comment</Text>
-                    </TouchableOpacity>
-                </View>
+                <TouchableOpacity onPress={toggleModal} style={[globalStyles.btn,globalStyles.flexed,styles.btn]}>
+                    <Text style={[globalStyles.btnText,styles.btnText]}>Comment</Text>
+                    <Feather name="arrow-right" size={20} color={"white"} />
+                </TouchableOpacity>
             </ScrollView>
             <View style={styles.imageWrapper}>
                 <Image source={{ uri:data.image }} style={[StyleSheet.absoluteFillObject,{ borderBottomLeftRadius:100 }]} />
             </View>
+            {
+                showModal &&
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                    <View style={[globalStyles.safeAreaView,styles.modals]}>
+                        <View style={styles.overlay2}/>
+                        <TouchableOpacity onPress={toggleModal} style={styles.closer} >
+                            <AntDesign name="close" size={35} color={"white"} />
+                        </TouchableOpacity>
+                        <View style={styles.body}>
+                            <View style={[globalStyles.flexed,{ backgroundColor:"whitesmoke" }]}>
+                                <InputField
+                                    value={comments}
+                                    placeholder="Write Your Comment..."
+                                    type="default"
+                                    styles={styles.textArea}
+                                    multiple={true}
+                                    onChange={(value) => setComment(value)}
+                                    iconRight={<Text style={styles.post} >Post</Text>}
+                                />
+                            </View>
+                            <View style={styles.msgs}>
+                            </View>
+                        </View>
+                    </View>
+                </TouchableWithoutFeedback>
+            }
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    textArea:{
+        backgroundColor:"whitesmoke",
+        alignItems:"flex-start",
+        paddingTop:10,
+    },
+    post:{
+        fontFamily:"Bold",
+        fontSize:15,
+        color:colors.mainText
+    },
+    msgs:{
+        flex:1
+    },
+    body:{
+        backgroundColor:'white',
+        height:height-globalStyles.safeAreaView.paddingTop*3,
+        width:width*0.85,
+        borderRadius:20,
+        marginBottom:height*0.05,
+        marginTop:height*0.02,
+        borderWidth:2,
+        borderColor:'whitesmoke',
+        overflow:"hidden"
+    },
+    closer:{
+        width:width*0.8,
+        alignItems:"flex-end"
+    },
+    overlay2:{
+        backgroundColor:colors.primary,
+        position:"absolute",
+        width,height,
+        opacity:.6,
+        zIndex:0
+    },
+    modals:{
+        position:'absolute',
+        width,
+        height,
+        top:0,
+        left:0,
+        zIndex:5,
+        justifyContent:"flex-end",
+        alignItems:"center",
+        ...globalStyles.shadow,
+        shadowOpacity:.5
+    },
     btns:{ 
         marginTop:10,
         marginBottom:height*0.05,
@@ -68,10 +161,17 @@ const styles = StyleSheet.create({
         color:"white",
     },
     btn:{
-        width:width*0.45,
+        width:width*0.5,
+        marginHorizontal:width*.20,
+        marginBottom:height*0.05,
+        marginTop:height*0.02,
         borderWidth:0,
+        borderRadius:0,
         marginVertical:0,
         shadowOpacity:0,
+        borderBottomLeftRadius:30,
+        borderTopRightRadius:30,
+        backgroundColor:colors.primary
     },
     overlay:{
         position:"absolute",

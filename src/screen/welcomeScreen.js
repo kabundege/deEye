@@ -19,10 +19,10 @@ const WelcomeScreen = ({ navigation }) => (
             <Image style={[{ width:"100%",height:"100%",resizeMode:"contain" }]} source={require('../assets/images/Saly-31.png')} />
         </View>
         <Text style={styles.content}>
-            Ihuriro rusange ryumuryango kugirango uhe imiryango n'inshuti kubona inkunga mugushakisha ababo babuze.
+            A Global Community Platform to give families and friends access to support in finding missing loved ones
         </Text>
         <View style={[globalStyles.flexed,{ width:'80%' }]}>
-            <Text style={styles.next} onPress={() => navigation.navigate('login')}>Komeza</Text>
+            <Text style={styles.next} onPress={() => navigation.navigate('login')}>Next</Text>
             <TouchableOpacity onPress={() => navigation.navigate('login')} style={styles.btn}>
                 <FontAwesome5 size={20} color="white" name="chevron-right" />
             </TouchableOpacity>
@@ -38,11 +38,10 @@ const styles = StyleSheet.create({
         height:"40%",
     },
     content:{
-        fontFamily:"Medium",
-        color:colors.mutedText,
+        fontFamily:"Regular",
+        color:colors.mainText,
         fontSize:20,
         marginHorizontal:'10%',
-        textAlign:'center'
     },
     next:{
         fontFamily: "Bold",
