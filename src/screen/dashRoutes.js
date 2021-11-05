@@ -24,7 +24,7 @@ export default () => {
         backgroundColor: colors.baseBg,
       }}
       tabBar={(props) => <MyTabBar {...props} />}
-      initialRouteName="home"
+      initialRouteName="post"
     >
       <Tab.Screen
         name="home"

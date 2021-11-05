@@ -24,9 +24,9 @@ class StoreProvider extends Component{
                     creator_id:5,
                     status:'active',
                     type:'lost',
-                    "complexion":"Dark",
-                    "location":"Kigali, Rwanda",
-                    "nationality":"Rwandan"
+                    complexion:"Dark",
+                    location:"Kigali, Rwanda",
+                    nationality:"Rwandan"
                 },{
                     id: 2,
                     image:'https://picsum.photos/200/300',
@@ -38,9 +38,9 @@ class StoreProvider extends Component{
                     creator_id:3,
                     status:'dormant',
                     type:'lost',
-                    "complexion":"Dark",
-                    "location":"Kigali, Rwanda",
-                    "nationality":"Rwandan"
+                    complexion:"Dark",
+                    location:"Kigali, Rwanda",
+                    nationality:"Rwandan"
                 },{
                     id: 3,
                     image:'https://picsum.photos/200/300',
@@ -52,9 +52,9 @@ class StoreProvider extends Component{
                     creator_id:4,
                     status:'closed',
                     type:'lost',
-                    "complexion":"Dark",
-                    "location":"Kigali, Rwanda",
-                    "nationality":"Rwandan"
+                    complexion:"Dark",
+                    location:"Kigali, Rwanda",
+                    nationality:"Rwandan"
                 },{
                     id: 4,
                     image:'https://picsum.photos/200/300',
@@ -66,9 +66,9 @@ class StoreProvider extends Component{
                     creator_id:2,
                     status:'active',
                     type:'found',
-                    "complexion":"Dark",
-                    "location":"Kigali, Rwanda",
-                    "nationality":"Rwandan"
+                    complexion:"Dark",
+                    location:"Kigali, Rwanda",
+                    nationality:"Rwandan"
                 },{
                     id: 5,
                     image:'https://picsum.photos/200/300',
@@ -80,9 +80,9 @@ class StoreProvider extends Component{
                     creator_id:1,
                     status:'closed',
                     type:'found',
-                    "complexion":"Dark",
-                    "location":"Kigali, Rwanda",
-                    "nationality":"Rwandan"
+                    complexion:"Dark",
+                    location:"Kigali, Rwanda",
+                    nationality:"Rwandan"
                 },
             ],
             comments:[
