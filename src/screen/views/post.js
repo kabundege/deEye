@@ -59,7 +59,7 @@ export default function Post() {
 
     const upload = () => {
         if(
-            image && description && type && types.indexOf(type) !== -1
+            image && description && type && types.indexOf(String(type).toLowerCase()) !== -1
         ){
             const newCase = {
                 id: posts.length + 1,
