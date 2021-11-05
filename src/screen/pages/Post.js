@@ -19,7 +19,7 @@ const Section = ({label,info}) => (
 )
 
 export default function PostScreen({ navigation,route }) {
-    const { comments,views,handlerContext,user } = useContext(StoreContext)
+    const { comments,views,posts,handlerContext,user } = useContext(StoreContext)
     const [ showModal,setModal ] = useState(false)
     const [ allComents,setComents ] = useState([])
     const [ newComment,setComment ] = useState(null)
@@ -53,6 +53,15 @@ export default function PostScreen({ navigation,route }) {
         setComment(null)
     }
 
+    const closecase = () => {
+        const newPosts = posts.map( one => {
+            if(one.id === data.id) return { ...data,status: data.status === 'active' ? 'closed' : 'active' }
+            else return one
+        })
+        handlerContext('posts',newPosts)
+        data[status] = data[status] === 'active' ? 'closed' : 'active'
+    }
+
     return (
         <View style={styles.screen}>
             <StatusBar style="dark" backgroundColor="white" />
@@ -77,6 +86,12 @@ export default function PostScreen({ navigation,route }) {
                     <Text style={[globalStyles.btnText,styles.btnText]}>Comment</Text>
                     <Feather name="arrow-right" size={20} color={"white"} />
                 </TouchableOpacity>
+                {
+                    data?.creator_id === user.id &&
+                        <TouchableOpacity onPress={closecase} style={[globalStyles.btn,globalStyles.flexed,styles.btn,{ backgroundColor:colors.secondary }]}>
+                            <Text style={[globalStyles.btnText,styles.btnText]}>Close case</Text>
+                        </TouchableOpacity>
+                }
             </ScrollView>
             <View style={styles.imageWrapper}>
                 <Image source={{ uri:data.image }} style={[StyleSheet.absoluteFillObject,{ borderBottomLeftRadius:100 }]} />

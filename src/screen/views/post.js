@@ -11,7 +11,7 @@ import { StoreContext } from '../../config/store';
 const { height,width } = Dimensions.get("screen")
 
 const genders = [ 'male',"female" ]
-const type = [ 'lost',"found" ]
+const types = [ 'lost',"found" ]
 
 export default function Post() {
     const [ creds,setCreds ] = useState({});
@@ -59,7 +59,7 @@ export default function Post() {
 
     const upload = () => {
         if(
-            image && description && type && gender
+            image && description && type && types.indexOf(type) !== -1
         ){
             const newCase = {
                 id: posts.length + 1,
@@ -129,6 +129,12 @@ export default function Post() {
                     value={name}
                     onChange={(value)=>handlerChange('name',value)}
                     iconLeft={<Feather name="user" size={20} color={colors.mutedText} />}
+                />
+                <InputField 
+                    placeholder="Case Type : Lost or Found"
+                    value={location}
+                    onChange={(value)=>handlerChange('location',value)}
+                    iconLeft={<MaterialCommunityIcons name="pin" size={20} color={colors.mutedText} />}
                 />
                 <InputField 
                     placeholder="Gender"
