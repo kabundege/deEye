@@ -17,13 +17,13 @@ const routes = () => (
   <StoreProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="landing" screenOptions={{headerShown:false}}>
-        {/* <Stack.Screen 
+        <Stack.Screen 
           name="landing"
           component={WelcomeScreen} 
           listeners={ ({ navigation }) => ({ 
             focus: ()=> checkAuth(true,()=> navigation.replace("dash")) 
           })}
-        /> */}
+        />
         <Stack.Screen name="dash" component={dashRoutes} />
         <Stack.Screen name="login" component={LoginScreen} />
         <Stack.Screen name="signup" component={SignUpScreen} />

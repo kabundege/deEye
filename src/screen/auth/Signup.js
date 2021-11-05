@@ -20,17 +20,19 @@ const SignUpScreen = ({ navigation }) => {
     if (!loading) {
       if (name && password && phoneNumber) {
         setCreds({ ...creds, loading: true })
-        Login({ name, password, phoneNumber })
-          .then(async res => {
-            setCreds({ ...creds, loading: false })
-            if (res.statusCode === 200) {
-              const { data } = res;
-              await AsyncStorage.setItem("user-token", data);
-              navigation.replace('dash');
-            } else {
-              SimpleNotification("Login failed due to", res.message)
-            }
-          })
+        handlerContext('user',{ ...user,phoneNumber,name })
+        navigation.replace('dash');
+        // Login({ name, password, phoneNumber })
+        //   .then(async res => {
+        //     setCreds({ ...creds, loading: false })
+        //     if (res.statusCode === 200) {
+        //       const { data } = res;
+        //       await AsyncStorage.setItem("user-token", data);
+        //       navigation.replace('dash');
+        //     } else {
+        //       SimpleNotification("Login failed due to", res.message)
+        //     }
+        //   })
       } else {
         SimpleNotification('Misssing Something', 'Fill-in the Missing Fields')
       }

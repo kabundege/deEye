@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native"
 import { colors } from '../../helpers/colors'
 import { globalStyles } from '../../helpers/styles'
@@ -7,10 +7,12 @@ import { Feather } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Login } from '../../API/user'
 import { SimpleCancelableNotification, SimpleNotification } from '../../components/alert'
+import { StoreContext } from '../../config/store'
 
 const { width, height } = Dimensions.get('screen')
 
 const LoginScreen = ({ navigation }) => {
+  const { user,handlerContext } = useContext(StoreContext)
   const [creds, setCreds] = useState({ hidePassword: true })
   const { phoneNumber, password, hidePassword, loading } = creds;
 
@@ -19,17 +21,20 @@ const LoginScreen = ({ navigation }) => {
     if (!loading) {
       if (phoneNumber && password) {
         setCreds({ ...creds, loading: true })
-        Login({ phoneNumber, password })
-          .then(async res => {
-            setCreds({ ...creds, loading: false })
-            if (res.statusCode === 200) {
-              const { data } = res;
-              await AsyncStorage.setItem("user-token", data);
-              navigation.replace('dash');
-            } else {
-              SimpleNotification("Login failed due to", res.message)
-            }
-          })
+        handlerContext('user',{ ...user,phoneNumber })
+        navigation.replace('dash');
+        // Login({ phoneNumber, password })
+        //   .then(async res => {
+        //     setCreds({ ...creds, loading: false })
+        //     if (res.statusCode === 200) {
+        //       const { data } = res;
+        //       await AsyncStorage.setItem("user-token", data);
+        //       navigation.replace('dash');
+        //     } else {
+        //       SimpleNotification("Login failed due to", res.message)
+        //     }
+        //   })
+
       } else {
         SimpleNotification('Misssing Something', 'Fill-in the Missing Fields')
       }
