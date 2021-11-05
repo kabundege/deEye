@@ -132,9 +132,9 @@ export default function Post() {
                 />
                 <InputField 
                     placeholder="Case Type : Lost or Found"
-                    value={location}
-                    onChange={(value)=>handlerChange('location',value)}
-                    iconLeft={<MaterialCommunityIcons name="pin" size={20} color={colors.mutedText} />}
+                    value={type}
+                    onChange={(value)=>handlerChange('type',value)}
+                    iconLeft={<Feather name="briefcase" size={20} color={colors.mutedText} />}
                 />
                 <InputField 
                     placeholder="Gender"
@@ -179,7 +179,7 @@ export default function Post() {
                     <Text style={styles.error}>{error}</Text>
                 }
                 <TouchableOpacity 
-                    onPress={upload} 
+                    onPress={()=>upload()} 
                     style={[globalStyles.btn,globalStyles.flexed,styles.btn]}
                 >
                     <Text style={[globalStyles.btnText,styles.btnText]}>Post</Text>

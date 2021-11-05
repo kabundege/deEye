@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
         ...globalStyles.shadow,
         position:'absolute',
         top:height*0.1,
-        left:width*0.6,
+        right:width*0.1,
         padding:5,
         borderRadius:10,
         borderColor:'whitesmoke',

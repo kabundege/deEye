@@ -87,9 +87,21 @@ export default function PostScreen({ navigation,route }) {
                     <Feather name="arrow-right" size={20} color={"white"} />
                 </TouchableOpacity>
                 {
-                    data?.creator_id === user.id &&
-                        <TouchableOpacity onPress={closecase} style={[globalStyles.btn,globalStyles.flexed,styles.btn,{ backgroundColor:colors.secondary }]}>
-                            <Text style={[globalStyles.btnText,styles.btnText]}>Close case</Text>
+                    data?.creator_id === user.id && 
+                        <TouchableOpacity 
+                            onPress={closecase} 
+                            style={[
+                                globalStyles.btn,
+                                globalStyles.flexed,
+                                styles.btn,
+                                {  
+                                    backgroundColor: data?.status == 'closed' ? colors.secondary :  colors.success,
+                                    marginTop:0 
+                                }
+                            ]}
+                        >
+                            <Text style={[globalStyles.btnText,styles.btnText]}>{ data.status === 'active' ? 'Close case' : 'Re-open case'}</Text>
+                            { data.status == 'active' && <Feather name="check" size={20} color={"white"} />}
                         </TouchableOpacity>
                 }
             </ScrollView>
