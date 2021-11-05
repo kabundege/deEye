@@ -65,9 +65,11 @@ export default function Post() {
                 id: posts.length + 1,
                 creator_id: user.id ,
                 image: image.uri,
+                status:"active",
                 ...creds
             }
             handlerContext('posts',[ newCase,...posts ])
+            setCreds({})
         }else{
             setError("Missing some fields")
         }
