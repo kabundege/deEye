@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
-import { Dimensions, Image, ScrollView, Picker, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { colors } from '../../helpers/colors';
 import { globalStyles } from '../../helpers/styles';
 import { Feather, FontAwesome, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
@@ -64,7 +64,7 @@ export default function Post() {
             const newCase = {
                 id: posts.length + 1,
                 creator_id: user.id ,
-                image,
+                image: image.uri,
                 ...creds
             }
             handlerContext('posts',[ newCase,...posts ])
