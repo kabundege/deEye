@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar'
 import React, { useContext, useEffect, useState } from 'react'
 import { View, Text,StyleSheet, FlatList, Dimensions, TouchableWithoutFeedback, ActivityIndicator } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { getAllPost } from '../../API/posts'
 import Post from '../../components/Post'
 import { StoreContext } from '../../config/store'
 import { colors } from '../../helpers/colors'
@@ -37,7 +38,7 @@ export default function Home ({ navigation }) {
             setPosts([])
         }
         setLoader(false)
-    } ,[cases])
+    } ,[cases,posts])
 
     const cassesHandler = (casse) => Promise.resolve(setCases(casse)).then(() => setModal(!showModal))
 

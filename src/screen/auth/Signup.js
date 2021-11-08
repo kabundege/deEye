@@ -1,17 +1,19 @@
 import { StatusBar } from 'expo-status-bar'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Text, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native"
 import { colors } from '../../helpers/colors'
 import { globalStyles } from '../../helpers/styles'
 import InputField from '../../components/input'
 import { Feather } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Login } from '../../API/user'
+import { Login, SignUp } from '../../API/user'
 import { SimpleNotification } from '../../components/alert'
+import { StoreContext } from '../../config/store'
 
 const { width, height } = Dimensions.get('screen')
 
 const SignUpScreen = ({ navigation }) => {
+  const { handlerContext } = useContext(StoreContext)
   const [creds, setCreds] = useState({ hidePassword: true })
   const { name, phoneNumber, password, hidePassword, loading } = creds;
 
@@ -20,19 +22,18 @@ const SignUpScreen = ({ navigation }) => {
     if (!loading) {
       if (name && password && phoneNumber) {
         setCreds({ ...creds, loading: true })
-        handlerContext('user',{ ...user,phoneNumber,name })
-        navigation.replace('dash');
-        // Login({ name, password, phoneNumber })
-        //   .then(async res => {
-        //     setCreds({ ...creds, loading: false })
-        //     if (res.statusCode === 200) {
-        //       const { data } = res;
-        //       await AsyncStorage.setItem("user-token", data);
-        //       navigation.replace('dash');
-        //     } else {
-        //       SimpleNotification("Login failed due to", res.message)
-        //     }
-        //   })
+        SignUp({ name, password, phoneNumber })
+          .then(async res => {
+            setCreds({ ...creds, loading: false })
+            if (res.statusCode === 201) {
+              const { data } = res;
+              await AsyncStorage.setItem("phoneNumber", data.phoneNumber);
+              handlerContext('user',data)
+              navigation.replace('dash');
+            } else {
+              SimpleNotification("Login failed due to", res.message)
+            }
+          })
       } else {
         SimpleNotification('Misssing Something', 'Fill-in the Missing Fields')
       }
@@ -73,7 +74,7 @@ const SignUpScreen = ({ navigation }) => {
                     <InputField
                       value={phoneNumber}
                       placeholder="Phone  Number"
-                      type="email-address"
+                      type="numeric"
                       iconLeft={<Feather name="phone" size={25} color={colors.lightIcon} />}
                       onChange={(value) => handlerChange('phoneNumber', value)}
                     />

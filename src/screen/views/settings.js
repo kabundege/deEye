@@ -14,8 +14,8 @@ export default function Settings ({ navigation }) {
 
     useEffect(()=>{
         setCreds(() => {
-            const currentPosts = posts.filter( one => one.creator_id == user.id );
-            const currentComments = comments.filter( one => one.creator_id == user.id );
+            const currentPosts = posts.filter( one => one.creator_id == user?.id );
+            const currentComments = comments.filter( one => one.creator_id == user?.id );
             return {
                 allPosts: currentPosts.length,
                 allComments: currentComments.length,
@@ -38,7 +38,7 @@ export default function Settings ({ navigation }) {
                 <Feather name="user" size={50} color={'white'} style={{ marginVertical:"25%",opacity:.5 }} />
             </View>
             <View style={styles.form}>
-                <Text numberOfLines={2} style={styles.headerText}>{user.name}</Text>
+                <Text numberOfLines={2} style={styles.headerText}>{user?.name}</Text>
                 <View style={globalStyles.divider}/>
                 <View style={globalStyles.flexed}>
                     <View style={styles.wrapper}>

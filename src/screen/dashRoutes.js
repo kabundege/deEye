@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Dimensions, Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,12 +11,45 @@ import SettingsScreen from "./views/settings";
 import { StyleSheet, Text, View } from "react-native";
 import MyTabBar from "../components/bottomNav";
 import { globalStyles } from "../helpers/styles";
+import { StoreContext } from "../config/store";
+import { getUserInfo } from "../API/user";
+import { getAllPost } from "../API/posts";
+import { getAllComments } from "../API/comments";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { height } = Dimensions.get("screen");
 const Tab = createBottomTabNavigator();
 
-export default () => {
+export default ({ navigation }) => {
   const headerShown = false;
+
+  const { user,posts,comments,handlerContext } = useContext(StoreContext)
+
+  useEffect(()=>{
+    if(!user)
+    getUserInfo()
+    .then(res => {
+      if(res.statusCode == 200){
+        handlerContext('user',res.data)
+      }
+    })
+
+    if(!posts[0])
+    getAllPost()
+    .then(res => {
+      if(res.statusCode == 200){
+        handlerContext('posts',res.data)
+      }
+    })
+
+    if(!comments[0])
+    getAllComments()
+    .then(res => {
+      if(res.statusCode == 200){
+        handlerContext('comment',res.data)
+      }
+    })
+  },[user,posts,comments])
 
   return (
     <Tab.Navigator

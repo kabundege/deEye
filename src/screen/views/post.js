@@ -7,6 +7,7 @@ import { globalStyles } from '../../helpers/styles';
 import { Feather, FontAwesome, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 import InputField from '../../components/input';
 import { StoreContext } from '../../config/store';
+import { createPost } from '../../API/posts';
 
 const { height,width } = Dimensions.get("screen")
 
@@ -62,14 +63,15 @@ export default function Post() {
             image && description && type && types.indexOf(String(type).toLowerCase()) !== -1
         ){
             const newCase = {
-                id: posts.length + 1,
-                creator_id: user.id ,
                 image: image.uri,
                 status:"active",
                 ...creds
             }
-            handlerContext('posts',[ newCase,...posts ])
-            setCreds({})
+            createPost(newCase)
+            .then(res => {
+                handlerContext('posts',[ res.data,...posts ])
+                setCreds({})
+            })
         }else{
             setError("Missing some fields")
         }

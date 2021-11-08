@@ -8,6 +8,7 @@ import { colors } from '../../helpers/colors';
 import { globalStyles } from '../../helpers/styles';
 import moment from 'moment';
 import "moment-timezone";
+import { createComment } from '../../API/comments';
 
 const { height,width } = Dimensions.get('screen')
 
@@ -25,10 +26,10 @@ export default function PostScreen({ navigation,route }) {
     const [ newComment,setComment ] = useState(null)
     const { data } = route.params;
 
-    useEffect(()=>setComents(comments.filter(one => one.story_id === data.id )),[comments]);
+    useEffect(()=>setComents( comments[0] ? comments.filter(one => one.story_id === data.id ) : []),[comments]);
 
     useEffect(()=>{
-        const exists = views.find(one => one.story_id === data.id)
+        const exists = views.find(one => one?.story_id === data.id)
         if(!exists){
             const newView = {
                 id:views.length+1,
@@ -43,14 +44,14 @@ export default function PostScreen({ navigation,route }) {
     const submitComment = () => {
         const payload = {
             content: newComment,
-            id:comments.length+1,
-            creator:user,
-            creator_id:user.id,
             story_id:data.id,
             timeStamp:Date.now(),
         }
-        handlerContext('comments',[ payload,...comments ])
-        setComment(null)
+        createComment(payload)
+        .then(res => {
+            handlerContext('comments',[ res.data,...comments ]);
+            setComment(null);
+        })
     }
 
     const closecase = () => {

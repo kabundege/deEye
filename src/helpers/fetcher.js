@@ -9,16 +9,12 @@ export const controller = new AbortController()
 export const Fetcher = async (Body, url, method) => {
 
   const { signal } = controller
-  const ip = await AsyncStorage.getItem("user-ip")
-  const token = await AsyncStorage.getItem("user-token")
-  const country = await AsyncStorage.getItem("user-country")
+  const phoneNumber = await AsyncStorage.getItem("phoneNumber")
   
   const headers = {
-    ip,
-    country,
+    "phoneNumber":phoneNumber,
     "Accept": "application/json",
     "Content-Type": "application/json",
-    "Authorization": token ? `Bearer ${token}` : '',
   }
 
   const response = await Fetch(REACT_APP_API_URL+url, {
