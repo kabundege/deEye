@@ -30,7 +30,7 @@ export default function Home ({ navigation }) {
             else if (cases === 'recent')
                 casses = posts.filter( one => !one.status.includes('dormant'))
             else if (cases === 'old')
-                casses = randomise(posts.reverse())
+                casses = posts.filter( one => one.status.includes('dormant'))
             else 
                 casses = posts.filter( one => one.type.includes(cases) || one.status.includes(cases))
             setPosts(casses)

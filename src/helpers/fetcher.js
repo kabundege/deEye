@@ -9,10 +9,10 @@ export const controller = new AbortController()
 export const Fetcher = async (Body, url, method) => {
 
   const { signal } = controller
-  const phoneNumber = await AsyncStorage.getItem("phoneNumber")
+  const phone_number = await AsyncStorage.getItem("phone_number")
   
   const headers = {
-    "phoneNumber":phoneNumber,
+    "phone_number":phone_number,
     "Accept": "application/json",
     "Content-Type": "application/json",
   }

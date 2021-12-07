@@ -62,10 +62,13 @@ export default function Post() {
         if(
             image && description && type && types.indexOf(String(type).toLowerCase()) !== -1
         ){
+            const {  id,phone_number } = user;
             const newCase = {
                 image: image.uri,
                 status:"active",
-                ...creds
+                ...creds,
+                phone_number,
+                creator_id:id
             }
             createPost(newCase)
             .then(res => {

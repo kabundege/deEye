@@ -1,4 +1,4 @@
-import { AntDesign, Feather, FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign, Feather, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useEffect, useState } from 'react'
 import { View, Text,StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView, TouchableWithoutFeedback, Keyboard, FlatList } from 'react-native'
@@ -9,6 +9,7 @@ import { globalStyles } from '../../helpers/styles';
 import moment from 'moment';
 import "moment-timezone";
 import { createComment } from '../../API/comments';
+import { sendNotification } from '../../API/user';
 
 const { height,width } = Dimensions.get('screen')
 
@@ -45,7 +46,7 @@ export default function PostScreen({ navigation,route }) {
         const payload = {
             content: newComment,
             story_id:data.id,
-            timeStamp:Date.now(),
+            creator_id:user.id,
         }
         createComment(payload)
         .then(res => {
@@ -61,6 +62,17 @@ export default function PostScreen({ navigation,route }) {
         })
         handlerContext('posts',newPosts)
         data[status] = data[status] === 'active' ? 'closed' : 'active'
+    }
+
+    const sendSmS = () => {
+        const payload = {
+            from:user.phone_number,
+            to:data.phone_number,
+        }
+        sendNotification(payload)
+        .then(res => {
+
+        })
     }
 
     return (
@@ -82,10 +94,20 @@ export default function PostScreen({ navigation,route }) {
                     <Text numberOfLines={5} style={[styles.info,{ fontFamily:"Medium" }]}>{ data.description || "Not Specified" }</Text>
                 </View>
                 <Section label="Case Status" info={data.status} />
-                <Section label="Telephone" info={data.phoneNumber} />
-                <TouchableOpacity onPress={toggleModal} style={[globalStyles.btn,globalStyles.flexed,styles.btn]}>
-                    <Text style={[globalStyles.btnText,styles.btnText]}>Comment</Text>
-                    <Feather name="arrow-right" size={20} color={"white"} />
+                <Section label="Telephone" info={data.phone_number} />
+                <TouchableOpacity onPress={sendSmS} style={[globalStyles.flexed,styles.smsBtn]}>
+                    <FontAwesome5 name="bullhorn" color={colors.dimeText} size={30} />
+                    <View  style={{flex:.6}}>
+                        <Text style={{ fontFamily:"Bold",fontSize:15 }} >Send A Notification </Text>
+                        <Text style={{ fontFamily:"Medium",fontSize:15 }} >SMS ( CallBack ) </Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={toggleModal} style={[globalStyles.flexed,styles.smsBtn,styles.btn]}>
+                    <MaterialCommunityIcons name="cellphone-message" size={40} color={"#ccc"} />
+                    <View style={{flex:.6}}>
+                        <Text style={{ fontFamily:"Bold",fontSize:15,color:"white" }} >View Comments</Text>
+                        <Text style={{ fontFamily:"Regular",fontSize:15,color:"white" }} >And Contribute </Text>
+                    </View>
                 </TouchableOpacity>
                 {
                     data?.creator_id === user.id && 
@@ -150,7 +172,7 @@ export default function PostScreen({ navigation,route }) {
                                             <View style={styles.comment}>
                                                 <Text style={styles.commentName}>{one.creator?.name}</Text>
                                                 <Text style={styles.commentContent}>{one.content}</Text>
-                                                <Text style={styles.timeStamp}>{moment(one.timestamp).fromNow()}</Text>
+                                                <Text style={styles.timeStamp}>{moment(one.createdAt).fromNow()}</Text>
                                             </View>
                                         )
                                     )
@@ -165,6 +187,11 @@ export default function PostScreen({ navigation,route }) {
 }
 
 const styles = StyleSheet.create({
+    smsBtn:{ 
+        justifyContent:"space-evenly",
+        backgroundColor:colors.note,
+        paddingVertical:10 
+    },
     timeStamp:{
         textAlign:"right",
         marginTop:5
@@ -242,16 +269,14 @@ const styles = StyleSheet.create({
         color:"white",
     },
     btn:{
-        width:width*0.5,
-        marginHorizontal:width*.20,
+        // width:width,
+        // marginHorizontal:width*.20,
         marginBottom:height*0.05,
         marginTop:height*0.02,
         borderWidth:0,
         borderRadius:0,
         marginVertical:0,
         shadowOpacity:0,
-        borderBottomLeftRadius:30,
-        borderTopRightRadius:30,
         backgroundColor:colors.primary
     },
     overlay:{

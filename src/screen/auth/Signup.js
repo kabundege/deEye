@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar'
 import React, { useContext, useState } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native"
+import { Text, View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native"
 import { colors } from '../../helpers/colors'
 import { globalStyles } from '../../helpers/styles'
 import InputField from '../../components/input'
@@ -10,30 +10,30 @@ import { Login, SignUp } from '../../API/user'
 import { SimpleNotification } from '../../components/alert'
 import { StoreContext } from '../../config/store'
 
-const { width, height } = Dimensions.get('screen')
+const { height } = Dimensions.get('screen')
 
 const SignUpScreen = ({ navigation }) => {
   const { handlerContext } = useContext(StoreContext)
   const [creds, setCreds] = useState({ hidePassword: true })
-  const { name, phoneNumber, password, hidePassword, loading } = creds;
+  const { name, phone_number, password, hidePassword, loading } = creds;
 
   const handlerSubmit = () => {
     // there's no action pending, then we should act
     if (!loading) {
-      if (name && password && phoneNumber) {
+      if (name && password && phone_number) {
         setCreds({ ...creds, loading: true })
-        SignUp({ name, password, phoneNumber })
+        SignUp({ name, password, phone_number })
           .then(async res => {
             setCreds({ ...creds, loading: false })
-            if (res.statusCode === 201) {
+            if (res.status === 201) {
               const { data } = res;
-              await AsyncStorage.setItem("phoneNumber", data.phoneNumber);
+              await AsyncStorage.setItem("phone_number", data.phone_number);
               handlerContext('user',data)
               navigation.replace('dash');
             } else {
-              SimpleNotification("Login failed due to", res.message)
+              SimpleNotification("Registration failed due to", res.message)
             }
-          })
+          }).catch(() => setCreds({ loading: false }))
       } else {
         SimpleNotification('Misssing Something', 'Fill-in the Missing Fields')
       }
@@ -72,11 +72,11 @@ const SignUpScreen = ({ navigation }) => {
                       onChange={(value) => handlerChange('name', value)}
                     />
                     <InputField
-                      value={phoneNumber}
+                      value={phone_number}
                       placeholder="Phone  Number"
                       type="numeric"
                       iconLeft={<Feather name="phone" size={25} color={colors.lightIcon} />}
-                      onChange={(value) => handlerChange('phoneNumber', value)}
+                      onChange={(value) => handlerChange('phone_number', value)}
                     />
 
                     <InputField

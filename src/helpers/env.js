@@ -1,3 +1,3 @@
 export default {
-    REACT_APP_API_URL : "https://deeye-backend.herokuapp.com/git ",
+    REACT_APP_API_URL : "https://deeye-backend.herokuapp.com",
 }

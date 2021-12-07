@@ -15,12 +15,11 @@ import { StoreContext } from "../config/store";
 import { getUserInfo } from "../API/user";
 import { getAllPost } from "../API/posts";
 import { getAllComments } from "../API/comments";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { height } = Dimensions.get("screen");
 const Tab = createBottomTabNavigator();
 
-export default ({ navigation }) => {
+export default () => {
   const headerShown = false;
 
   const { user,posts,comments,handlerContext } = useContext(StoreContext)
@@ -29,7 +28,7 @@ export default ({ navigation }) => {
     if(!user)
     getUserInfo()
     .then(res => {
-      if(res.statusCode == 200){
+      if(res.status === 200){
         handlerContext('user',res.data)
       }
     })
@@ -37,7 +36,7 @@ export default ({ navigation }) => {
     if(!posts[0])
     getAllPost()
     .then(res => {
-      if(res.statusCode == 200){
+      if(res.status === 200){
         handlerContext('posts',res.data)
       }
     })
@@ -45,7 +44,7 @@ export default ({ navigation }) => {
     if(!comments[0])
     getAllComments()
     .then(res => {
-      if(res.statusCode == 200){
+      if(res.status === 200){
         handlerContext('comment',res.data)
       }
     })

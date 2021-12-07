@@ -1,36 +1,36 @@
 import React, { useContext, useState } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native"
+import { Text, View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native"
 import { colors } from '../../helpers/colors'
 import { globalStyles } from '../../helpers/styles'
 import InputField from '../../components/input'
 import { Feather } from '@expo/vector-icons'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Login } from '../../API/user'
-import { SimpleCancelableNotification, SimpleNotification } from '../../components/alert'
+import { SimpleNotification } from '../../components/alert'
 import { StoreContext } from '../../config/store'
 
-const { width, height } = Dimensions.get('screen')
+const { height } = Dimensions.get('screen')
 
 const LoginScreen = ({ navigation }) => {
-  const { user,handlerContext } = useContext(StoreContext)
+  const { handlerContext } = useContext(StoreContext)
   const [creds, setCreds] = useState({ hidePassword: true })
-  const { phoneNumber, password, hidePassword, loading } = creds;
+  const { phone_number, password, hidePassword, loading } = creds;
 
   const handlerSubmit = () => {
     // there's no action pending, then we should act
     if (!loading) {
-      if (phoneNumber && password) {
+      if (phone_number && password) {
         setCreds({ ...creds, loading: true })
-        Login({ phoneNumber, password })
+        Login({ phone_number, password })
           .then(async res => {
             setCreds({ ...creds, loading: false })
-            if (res.statusCode === 200) {
+            if (res.status === 200) {
               const { data } = res;
-              await AsyncStorage.setItem("phoneNumber", data.phoneNumber);
+              await AsyncStorage.setItem("phone_number", data.phone_number);
               handlerContext('user',data)
               navigation.replace('dash');
             } else {
-              SimpleNotification("Login failed due to", res.message)
+              SimpleNotification("Login failed due to", res.error)
             }
           })
 
@@ -42,10 +42,6 @@ const LoginScreen = ({ navigation }) => {
 
   const togglePassword = () => {
     setCreds(prevState => ({ ...prevState, hidePassword: !hidePassword }))
-  }
-
-  const toggleModal = async () => {
-    setCreds(prevState => ({ ...prevState, showModal: !prevState.showModal }))
   }
 
   const handlerChange = (key, value) => {
@@ -68,11 +64,11 @@ const LoginScreen = ({ navigation }) => {
                 <Text style={styles.mainText}> Hey, {'\n'} Login Now. </Text>
                 <View style={styles.form}>
                     <InputField
-                      value={phoneNumber}
+                      value={phone_number}
                       placeholder="Phone Number"
                       type="numeric"
                       iconLeft={<Feather name='phone' size={25} color={colors.lightIcon} />}
-                      onChange={(value) => handlerChange('phoneNumber', value)}
+                      onChange={(value) => handlerChange('phone_number', value)}
                     />
 
                     <InputField
