@@ -105,13 +105,17 @@ export default function PostScreen({ navigation,route }) {
                 </View>
                 <Section label="Case Status" info={data.status} />
                 <Section label="Telephone" info={data.phone_number} />
-                <TouchableOpacity onPress={sendSmS} style={[globalStyles.flexed,styles.smsBtn]}>
-                    <FontAwesome5 name="bullhorn" color={colors.dimeText} size={30} />
-                    <View  style={{flex:.6}}>
-                        <Text style={[styles.mainText,{ color:colors.mainText }]} >Send A Notification </Text>
-                        <Text style={[styles.minText,{color:colors.mainText}]} >SMS ( CallBack ) </Text>
-                    </View>
-                </TouchableOpacity>
+                {
+                    /** a user should no be able to send an sms to her/him self, the button will be hidden */
+                    data?.creator_id !== user?._id &&
+                    <TouchableOpacity onPress={sendSmS} style={[globalStyles.flexed,styles.smsBtn]}>
+                        <FontAwesome5 name="bullhorn" color={colors.dimeText} size={30} />
+                        <View  style={{flex:.6}}>
+                            <Text style={[styles.mainText,{ color:colors.mainText }]} >Send A Notification </Text>
+                            <Text style={[styles.minText,{color:colors.mainText}]} >SMS ( CallBack ) </Text>
+                        </View>
+                    </TouchableOpacity>
+                }
                 <TouchableOpacity onPress={toggleModal} style={[globalStyles.flexed,styles.smsBtn,styles.btn]}>
                     <MaterialCommunityIcons name="cellphone-message" size={40} color={"#ccc"} />
                     <View style={{flex:.6}}>
