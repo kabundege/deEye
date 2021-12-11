@@ -14,7 +14,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 const WelcomeScreen = ({ navigation }) => (
     <View style={styles.screen}>
-        <StatusBar style="light" />
+        <StatusBar style="dark" />
         <View style={styles.logo} >
             <Image style={[{ width:"100%",height:"100%",resizeMode:"contain" }]} source={require('../assets/images/Saly-31.png')} />
         </View>

@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import React, { useRef } from 'react'
 import { StyleSheet, Text, View,Dimensions, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { colors } from '../helpers/colors'
+import env from '../helpers/env'
 import { globalStyles } from '../helpers/styles'
 
 const br = 30;
@@ -11,10 +12,17 @@ const { height,width } = Dimensions.get('screen')
 
 export default function Post({ navigation,data,isLast }) {
     const imageRef = useRef();
+    const imageUri = () => {
+        if (data.image.includes('https')){
+            return data.image
+        }else{
+            return env.REACT_APP_API_URL+"/src/uploads"+data.image;
+        }
+    }
     const onPress = () => navigation.navigate('specificPost',{ data })
     return (
         <TouchableOpacity onPress={onPress} style={[styles.wrapper,{ marginTop: data.index % 2 ? '6%' : data.index ? '-3%' : '-1%' ,marginBottom: isLast ? height*0.1 : 0 }]}>
-            <Image ref={imageRef} source={{ uri:data.image }} style={styles.image} />
+            <Image ref={imageRef} source={{ uri:imageUri() }} style={styles.image} />
             <Text numberOfLines={2} style={styles.name}>{data.name}</Text>
             <ActivityIndicator />
             <Text numberOfLines={1} style={[styles.content,{ backgroundColor: data.type === 'lost' ? colors.secondary : colors.success }]}>    

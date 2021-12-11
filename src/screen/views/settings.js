@@ -14,8 +14,8 @@ export default function Settings ({ navigation }) {
 
     useEffect(()=>{
         setCreds(() => {
-            const currentPosts = posts.filter( one => one.creator_id == user?.id );
-            const currentComments = comments.filter( one => one.creator_id == user?.id );
+            const currentPosts = posts.filter( one => one.creator_id == user?._id );
+            const currentComments = comments.filter( one => one.creator_id == user?._id );
             return {
                 allPosts: currentPosts.length,
                 allComments: currentComments.length,

@@ -32,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
             } else {
               SimpleNotification("Login failed due to", res.error)
             }
-          })
+          }).catch(()=>SimpleNotification('Authentication Failed','Try Again Later',()=>setCreds({ ...creds, loading: false })))
 
       } else {
         SimpleNotification('Misssing Something', 'Fill-in the Missing Fields')

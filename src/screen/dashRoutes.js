@@ -45,7 +45,7 @@ export default () => {
     getAllComments()
     .then(res => {
       if(res.status === 200){
-        handlerContext('comment',res.data)
+        handlerContext('comments',res.data)
       }
     })
   },[user,posts,comments])

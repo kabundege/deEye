@@ -76,7 +76,7 @@ export default function Home ({ navigation }) {
                                     numColumns={2}
                                     style={{paddingTop:10,width}}
                                     showsVerticalScrollIndicator={false}
-                                    keyExtractor={item => item.id.toString()}
+                                    keyExtractor={(_,index) => index.toString()}
                                     renderItem={({ item,index }) => <Post navigation={navigation} data={{...item,index}} isLast={index + 1 === allPosts.length} />}
                                 />:
                                 <Text style={styles.notfound}> No {cases} cases {'\n'} Found </Text>

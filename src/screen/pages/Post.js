@@ -10,6 +10,7 @@ import moment from 'moment';
 import "moment-timezone";
 import { createComment } from '../../API/comments';
 import { sendNotification } from '../../API/user';
+import { SimpleNotification } from '../../components/alert';
 
 const { height,width } = Dimensions.get('screen')
 
@@ -27,7 +28,7 @@ export default function PostScreen({ navigation,route }) {
     const [ newComment,setComment ] = useState(null)
     const { data } = route.params;
 
-    useEffect(()=>setComents( comments[0] ? comments.filter(one => one.story_id === data.id ) : []),[comments]);
+    useEffect(()=>setComents( comments[0] ? comments.filter(one => one.story_id === data._id ) : []),[comments]);
 
     useEffect(()=>{
         const exists = views.find(one => one?.story_id === data.id)
@@ -45,19 +46,23 @@ export default function PostScreen({ navigation,route }) {
     const submitComment = () => {
         const payload = {
             content: newComment,
-            story_id:data.id,
-            creator_id:user.id,
+            story_id:data._id,
+            creator_id:user._id,
         }
         createComment(payload)
         .then(res => {
-            handlerContext('comments',[ res.data,...comments ]);
-            setComment(null);
+            if(res.status === 201){
+                handlerContext('comments',[ res.data,...comments ]);
+                setComment(null);
+            }else{
+                SimpleNotification("Erro sending notification",res.error,()=>{})
+            }
         })
     }
 
     const closecase = () => {
         const newPosts = posts.map( one => {
-            if(one.id === data.id) return { ...data,status: data.status === 'active' ? 'closed' : 'active' }
+            if(one.id === data._id) return { ...data,status: data.status === 'active' ? 'closed' : 'active' }
             else return one
         })
         handlerContext('posts',newPosts)
@@ -71,7 +76,12 @@ export default function PostScreen({ navigation,route }) {
         }
         sendNotification(payload)
         .then(res => {
-
+          console.log(res)
+          if(res.status === 200) {
+            SimpleNotification('SMS sent successfuly','Thank you for your coorperation,we will reach out shortly',()=>{})
+          }else{
+              SimpleNotification('Sending SMS failure',res.error,()=>{})
+          }
         })
     }
 
@@ -98,33 +108,38 @@ export default function PostScreen({ navigation,route }) {
                 <TouchableOpacity onPress={sendSmS} style={[globalStyles.flexed,styles.smsBtn]}>
                     <FontAwesome5 name="bullhorn" color={colors.dimeText} size={30} />
                     <View  style={{flex:.6}}>
-                        <Text style={{ fontFamily:"Bold",fontSize:15 }} >Send A Notification </Text>
-                        <Text style={{ fontFamily:"Medium",fontSize:15 }} >SMS ( CallBack ) </Text>
+                        <Text style={[styles.mainText,{ color:colors.mainText }]} >Send A Notification </Text>
+                        <Text style={[styles.minText,{color:colors.mainText}]} >SMS ( CallBack ) </Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={toggleModal} style={[globalStyles.flexed,styles.smsBtn,styles.btn]}>
                     <MaterialCommunityIcons name="cellphone-message" size={40} color={"#ccc"} />
                     <View style={{flex:.6}}>
-                        <Text style={{ fontFamily:"Bold",fontSize:15,color:"white" }} >View Comments</Text>
-                        <Text style={{ fontFamily:"Regular",fontSize:15,color:"white" }} >And Contribute </Text>
+                        <Text style={styles.mainText} >View Comments</Text>
+                        <Text style={styles.minText} >And Contribute </Text>
                     </View>
                 </TouchableOpacity>
                 {
-                    data?.creator_id === user.id && 
+                    data?.creator_id === user?._id && 
                         <TouchableOpacity 
                             onPress={closecase} 
                             style={[
-                                globalStyles.btn,
                                 globalStyles.flexed,
+                                styles.smsBtn,
                                 styles.btn,
                                 {  
-                                    backgroundColor: data?.status == 'closed' ? colors.secondary :  colors.success,
-                                    marginTop:0 
+                                    backgroundColor: data.status == 'closed' ? colors.secondary :  colors.success,
+                                    marginTop:-(height*0.03),
+                                    marginVertical:0,
+                                    marginBottom:0,
                                 }
                             ]}
                         >
-                            <Text style={[globalStyles.btnText,styles.btnText]}>{ data.status === 'active' ? 'Close case' : 'Re-open case'}</Text>
-                            { data.status == 'active' && <Feather name="check" size={20} color={"white"} />}
+                            { data.status == 'active' && <Feather name="check-circle" size={20} color={"white"} />}
+                            <View style={{flex:.6}}>
+                                <Text style={styles.mainText} > Case status</Text>
+                                <Text style={styles.minText} > {data.status} </Text>
+                            </View>
                         </TouchableOpacity>
                 }
             </ScrollView>
@@ -170,7 +185,7 @@ export default function PostScreen({ navigation,route }) {
                                     React.Children.toArray(
                                         allComents.map(one =>
                                             <View style={styles.comment}>
-                                                <Text style={styles.commentName}>{one.creator?.name}</Text>
+                                                <Text style={styles.commentName}>{one.creator_name || "John Doe" }</Text>
                                                 <Text style={styles.commentContent}>{one.content}</Text>
                                                 <Text style={styles.timeStamp}>{moment(one.createdAt).fromNow()}</Text>
                                             </View>
@@ -187,6 +202,8 @@ export default function PostScreen({ navigation,route }) {
 }
 
 const styles = StyleSheet.create({
+    mainText:{ fontFamily:"Bold",fontSize:15,color:"white" },
+    minText:{ fontFamily:"Medium",fontSize:15,color:"white",textTransform:"capitalize" },
     smsBtn:{ 
         justifyContent:"space-evenly",
         backgroundColor:colors.note,
