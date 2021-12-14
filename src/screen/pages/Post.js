@@ -11,6 +11,7 @@ import "moment-timezone";
 import { createComment } from '../../API/comments';
 import { sendNotification } from '../../API/user';
 import { SimpleNotification } from '../../components/alert';
+import env from '../../helpers/env';
 
 const { height,width } = Dimensions.get('screen')
 
@@ -24,6 +25,7 @@ const Section = ({label,info}) => (
 export default function PostScreen({ navigation,route }) {
     const { comments,views,posts,handlerContext,user } = useContext(StoreContext)
     const [ showModal,setModal ] = useState(false)
+    const [ loading,setLoader ] = useState(false)
     const [ allComents,setComents ] = useState([])
     const [ newComment,setComment ] = useState(null)
     const { data } = route.params;
@@ -31,7 +33,7 @@ export default function PostScreen({ navigation,route }) {
     useEffect(()=>setComents( comments[0] ? comments.filter(one => one.story_id === data._id ) : []),[comments]);
 
     useEffect(()=>{
-        const exists = views.find(one => one?.story_id === data.id)
+        const exists = views.find(one => one.story_id === data._id)
         if(!exists){
             const newView = {
                 id:views.length+1,
@@ -72,17 +74,25 @@ export default function PostScreen({ navigation,route }) {
     const sendSmS = () => {
         const payload = {
             from:user.phone_number,
-            to:data.phone_number,
+            to:data.phone_number
         }
+        setLoader(true)
         sendNotification(payload)
         .then(res => {
-          console.log(res)
           if(res.status === 200) {
             SimpleNotification('SMS sent successfuly','Thank you for your coorperation,we will reach out shortly',()=>{})
           }else{
               SimpleNotification('Sending SMS failure',res.error,()=>{})
           }
-        })
+        }).finally(()=>setLoader(false))
+    }
+
+    const imageUri = () => {
+        if (data.image.includes('https')){
+            return data.image
+        }else{
+            return env.REACT_APP_API_URL+"/uploads/"+data.image;
+        }
     }
 
     return (
@@ -112,7 +122,13 @@ export default function PostScreen({ navigation,route }) {
                         <FontAwesome5 name="bullhorn" color={colors.dimeText} size={30} />
                         <View  style={{flex:.6}}>
                             <Text style={[styles.mainText,{ color:colors.mainText }]} >Send A Notification </Text>
-                            <Text style={[styles.minText,{color:colors.mainText}]} >SMS ( CallBack ) </Text>
+                            <Text style={[styles.minText,{color:colors.mainText}]} >
+                                {
+                                    loading ?
+                                        "Loading...":
+                                        "SMS ( CallBack )"
+                                }
+                            </Text>
                         </View>
                     </TouchableOpacity>
                 }
@@ -148,7 +164,7 @@ export default function PostScreen({ navigation,route }) {
                 }
             </ScrollView>
             <View style={styles.imageWrapper}>
-                <Image source={{ uri:data.image }} style={[StyleSheet.absoluteFillObject,{ borderBottomLeftRadius:100 }]} />
+                <Image source={{ uri:imageUri() }} style={[StyleSheet.absoluteFillObject,{ borderBottomLeftRadius:100 }]} />
             </View>
             {
                 showModal &&

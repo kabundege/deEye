@@ -1,31 +1,47 @@
 import React, { useContext, useEffect, useState } from 'react'
 import * as ImagePicker from "expo-image-picker";
-import * as Permissions from "expo-permissions";
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback, View } from 'react-native'
 import { colors } from '../../helpers/colors';
 import { globalStyles } from '../../helpers/styles';
 import { Feather, FontAwesome, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 import InputField from '../../components/input';
 import { StoreContext } from '../../config/store';
 import { createPost } from '../../API/posts';
+import { StatusBar } from 'expo-status-bar'
+import { SimpleNotification } from '../../components/alert';
+import Fetch from "node-fetch";
 
 const { height,width } = Dimensions.get("screen")
 
 const genders = [ 'male',"female" ]
 const types = [ 'lost',"found" ]
 
+const createFormData = (image, body = {}) => {
+    const data = new FormData();
+  
+    data.append('image', {
+      name: image.fileName || "John Doe",
+      type: image.type || "jpg",
+      uri: Platform.OS === 'ios' ? image.uri.replace('file://', '') : image.uri,
+    });
+  
+    Object.keys(body).forEach((key) => {
+      data.append(key, body[key]);
+    });
+  
+    return data;
+  };
+
+
 export default function Post() {
     const [ creds,setCreds ] = useState({});
     const [ image,setPickImage ] = useState(null);
     const [ showModal,setModal ] = useState(false);
+    const [ loading,setLoader ] = useState(false);
     const [ error,setError ] = useState(null);
     const { user,posts,handlerContext } = useContext(StoreContext)
-    const [permission, askForPermission] = Permissions.usePermissions(
-        Permissions.CAMERA,
-        { ask: true }
-    );
 
-    const { name,age,gender,description,type,complexion,location,nationality } = creds;
+    const { name,age,gender,phoneNumber,description,type,complexion,location,nationality } = creds;
 
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -60,21 +76,37 @@ export default function Post() {
 
     const upload = () => {
         if(
-            image && description && type && types.indexOf(String(type).toLowerCase()) !== -1
+            image && type && types.indexOf(String(type).toLowerCase()) !== -1
         ){
-            const {  id,phone_number } = user;
+            const {  phone_number } = user;
             const newCase = {
-                image: image.uri,
-                status:"active",
                 ...creds,
-                phone_number,
-                creator_id:id
-            }
-            createPost(newCase)
-            .then(res => {
-                handlerContext('posts',[ res.data,...posts ])
-                setCreds({})
+                phone_number:phoneNumber
+                }
+            
+            delete newCase.phoneNumber;
+            setLoader(true);
+            // createPost(createFormData(image,newCase))
+            Fetch('https://deeye-backend.herokuapp.com/posts',{
+                method:"POST",
+                headers:{
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    phone_number, 
+                },
+                body:createFormData(image,newCase)
             })
+            .then(res => res.json())
+            .then(res => {
+                if(res.status === 201){
+                    handlerContext('posts',[ res.data,...posts ])
+                    setCreds({})
+                    setPickImage(null)
+                }else{
+                    SimpleNotification('Case Posting failed',res.error,()=>{})
+                }
+            }).catch(err => setError(err.message))
+            .finally(()=>setLoader(false))
         }else{
             setError("Missing some fields")
         }
@@ -84,17 +116,6 @@ export default function Post() {
         setCreds(prevCred => ({ ...prevCred,[key]:value }))
         setError(null)
     }
-
-    useEffect(() => {
-        if (image) {
-          upload();
-        }else{
-            if(!permission?.granted)
-            askForPermission();
-        }
-      }, [image]);
-
-    
 
     return (
         <View style={styles.screen}>
@@ -131,6 +152,7 @@ export default function Post() {
                 </View>
             </TouchableWithoutFeedback>
             <ScrollView showsVerticalScrollIndicator={false} style={styles.form}>
+                <StatusBar style="light" />
                 <InputField 
                     placeholder="Full Name"
                     value={name}
@@ -150,7 +172,14 @@ export default function Post() {
                     iconLeft={<FontAwesome name="genderless" size={20} color={colors.mutedText} />}
                 />
                 <InputField 
-                    placeholder="Location"
+                    placeholder="Telephone"
+                    value={phoneNumber}
+                    type={"numeric"}
+                    onChange={(value)=>handlerChange('phoneNumber',value)}
+                    iconLeft={<MaterialCommunityIcons name="phone" size={20} color={colors.mutedText} />}
+                />
+                <InputField 
+                    placeholder="Location i.e kk 123 st"
                     value={location}
                     onChange={(value)=>handlerChange('location',value)}
                     iconLeft={<MaterialCommunityIcons name="pin" size={20} color={colors.mutedText} />}
@@ -189,8 +218,11 @@ export default function Post() {
                     onPress={()=>upload()} 
                     style={[globalStyles.btn,globalStyles.flexed,styles.btn]}
                 >
-                    <Text style={[globalStyles.btnText,styles.btnText]}>Post</Text>
-                    <Feather name="plus" size={20} color={"white"} />
+                    {
+                        loading ?
+                            <ActivityIndicator /> :
+                            <Text style={[globalStyles.btnText,styles.btnText]}>Post</Text>
+                    }
                 </TouchableOpacity>
             </ScrollView>
         </View>
@@ -206,18 +238,18 @@ const styles = StyleSheet.create({
     },
     btnText:{
         color:"white",
+        fontFamily:"SemiBold"
     },
     btn:{
-        width:width*0.4,
+        width:width*0.35,
+        justifyContent:"center",
         marginHorizontal:width*.20,
-        marginBottom:height*0.1,
+        marginBottom:height*0.15,
         marginTop:height*0.02,
         borderWidth:0,
-        borderRadius:0,
+        borderRadius:50,
         marginVertical:0,
         shadowOpacity:0,
-        borderBottomLeftRadius:30,
-        borderTopRightRadius:30,
         backgroundColor:colors.primary
     },
     form:{

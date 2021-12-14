@@ -22,7 +22,7 @@ export default function Library ({ navigation }) {
 
     useEffect(()=> {
         setLoader(true)
-        const myPosts = posts.filter( one => one.creator_id === user.id )
+        const myPosts = posts.filter( one => one.creator_id === user._id )
         if(myPosts[0]){
             let casses;
             if(cases === 'all')
@@ -78,7 +78,7 @@ export default function Library ({ navigation }) {
                                     numColumns={2}
                                     style={{paddingTop:10,width}}
                                     showsVerticalScrollIndicator={false}
-                                    keyExtractor={item => item.id.toString()}
+                                    keyExtractor={item => item._id.toString()}
                                     renderItem={({ item,index }) => <Post navigation={navigation} data={{...item,index}} isLast={index + 1 === allPosts.length} />}
                                 />:
                                 <Text style={styles.notfound}> No {cases} cases {'\n'} Found </Text>

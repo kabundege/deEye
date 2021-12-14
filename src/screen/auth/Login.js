@@ -27,7 +27,8 @@ const LoginScreen = ({ navigation }) => {
             if (res.status === 200) {
               const { data } = res;
               await AsyncStorage.setItem("phone_number", data.phone_number);
-              handlerContext('user',data)
+              handlerContext('user',data);
+              handlerContext('views',[]);
               navigation.replace('dash');
             } else {
               SimpleNotification("Login failed due to", res.error)

@@ -25,11 +25,11 @@ const SignUpScreen = ({ navigation }) => {
         SignUp({ name, password, phone_number })
           .then(async res => {
             setCreds({ ...creds, loading: false })
-            console.log(res)
             if (res.status === 201) {
               const { data } = res;
               await AsyncStorage.setItem("phone_number", data.phone_number);
-              handlerContext('user',data)
+              handlerContext('user',data);
+              handlerContext('views',[]);
               navigation.replace('dash');
             } else {
               SimpleNotification("Registration failed due to", res.error)

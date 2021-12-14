@@ -16,7 +16,7 @@ export default function Post({ navigation,data,isLast }) {
         if (data.image.includes('https')){
             return data.image
         }else{
-            return env.REACT_APP_API_URL+"/src/uploads"+data.image;
+            return env.REACT_APP_API_URL+"/uploads/"+data.image;
         }
     }
     const onPress = () => navigation.navigate('specificPost',{ data })
