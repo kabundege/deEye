@@ -117,16 +117,17 @@ const styles = StyleSheet.create({
   },
   btn:{
     backgroundColor:colors.primary,
-    marginTop:"auto"
   },
   form:{
-    flex:.5,
-    justifyContent:"space-around"
+    flex:1,
+    justifyContent:"space-evenly"
   },
   secondaryText:{
     fontFamily:"Medium",
     color:colors.lightIcon,
-    fontSize:15
+    fontSize:15,
+    marginBottom:height*0.05,
+    marginTop:-height*0.02,
   },
   parent:{
     flex:1,
@@ -136,7 +137,8 @@ const styles = StyleSheet.create({
   mainText: {
     fontFamily: 'Bold',
     color: colors.mainText,
-    fontSize: 35
+    fontSize: 35,
+    marginVertical:height*0.1
   },
   screen: {
     height,
