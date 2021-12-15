@@ -10,8 +10,9 @@ import moment from 'moment';
 import "moment-timezone";
 import { createComment } from '../../API/comments';
 import { sendNotification } from '../../API/user';
-import { SimpleNotification } from '../../components/alert';
+import { SimpleCancelableNotification, SimpleNotification } from '../../components/alert';
 import env from '../../helpers/env';
+import { ChangeStatus } from '../../API/posts';
 
 const { height,width } = Dimensions.get('screen')
 
@@ -25,8 +26,10 @@ const Section = ({label,info}) => (
 export default function PostScreen({ navigation,route }) {
     const { comments,views,posts,handlerContext,user } = useContext(StoreContext)
     const [ showModal,setModal ] = useState(false)
+    const [ state,setState ] = useState('active')
     const [ loading,setLoader ] = useState(false)
     const [ allComents,setComents ] = useState([])
+    const [ toggleLoader,setToggler ] = useState(false)
     const [ newComment,setComment ] = useState(null)
     const { data } = route.params;
 
@@ -41,6 +44,10 @@ export default function PostScreen({ navigation,route }) {
             }
             handlerContext('views', [ ...views,newView ])
         }
+    },[])
+
+    useEffect(()=>{
+        setState(data.status)
     },[])
 
     const toggleModal = () => setModal(!showModal);
@@ -62,13 +69,23 @@ export default function PostScreen({ navigation,route }) {
         })
     }
 
-    const closecase = () => {
-        const newPosts = posts.map( one => {
-            if(one.id === data._id) return { ...data,status: data.status === 'active' ? 'closed' : 'active' }
-            else return one
-        })
-        handlerContext('posts',newPosts)
-        data[status] = data[status] === 'active' ? 'closed' : 'active'
+    const toggleCase = () => {
+        const status = data.status === 'active' ? 'closed' : 'active' ;
+        setToggler(true)
+        ChangeStatus(data._id,{ status })
+        .then(res => {
+            if(res.status === 200){
+                const newPosts = posts.map( one => {
+                    if(one._id === data._id) return { ...one,status }
+                    else return one
+                })
+                handlerContext('posts',newPosts)
+                setState(status)
+            }else{
+                SimpleNotification('Case Change Failed',res.error,()=>{})
+            }
+        }).catch(er => SimpleNotification('Case Update Failed',er.message,()=>{})
+        ).finally(()=>setToggler(false))
     }
 
     const sendSmS = () => {
@@ -142,23 +159,30 @@ export default function PostScreen({ navigation,route }) {
                 {
                     data?.creator_id === user?._id && 
                         <TouchableOpacity 
-                            onPress={closecase} 
+                            onPress={()=>
+                                SimpleCancelableNotification(
+                                    'Are You Sure ?',
+                                    `you want to ${ data.status === 'active' ? 'close' : 'activate' } this post`,
+                                    toggleCase)} 
                             style={[
                                 globalStyles.flexed,
                                 styles.smsBtn,
                                 styles.btn,
                                 {  
-                                    backgroundColor: data.status == 'closed' ? colors.secondary :  colors.success,
+                                    backgroundColor: state == 'closed' ? colors.secondary :  colors.success,
                                     marginTop:-(height*0.03),
                                     marginVertical:0,
-                                    marginBottom:0,
                                 }
                             ]}
                         >
-                            { data.status == 'active' && <Feather name="check-circle" size={20} color={"white"} />}
+                            { 
+                                state === 'active' 
+                                    ? <Feather name="check-circle" size={20} color={"white"} />
+                                    : <AntDesign name="closecircle" size={20} color={"white"} />
+                            }
                             <View style={{flex:.6}}>
                                 <Text style={styles.mainText} > Case status</Text>
-                                <Text style={styles.minText} > {data.status} </Text>
+                                <Text style={styles.minText} > { toggleLoader ? "Loading..." : state } </Text>
                             </View>
                         </TouchableOpacity>
                 }

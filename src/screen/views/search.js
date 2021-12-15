@@ -68,7 +68,7 @@ export default function Search ({ navigation }) {
                                         numColumns={2}
                                         style={{paddingTop:10,width}}
                                         showsVerticalScrollIndicator={false}
-                                        keyExtractor={item => item.id.toString()}
+                                        keyExtractor={item => item._id?.toString()}
                                         renderItem={({ item,index }) => <Post navigation={navigation} data={{...item,index}} isLast={index + 1 === results.length} />}
                                     />:
                                     <Text style={styles.notfound}> No {query} cases {'\n'} Found </Text>

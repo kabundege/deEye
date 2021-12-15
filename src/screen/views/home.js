@@ -26,7 +26,7 @@ export default function Home ({ navigation }) {
         if(posts[0]){
             let casses;
             if(cases === 'all')
-                casses = randomise(posts)
+                casses = randomise(posts.filter(one => one.status === 'active'))
             else if (cases === 'recent')
                 casses = posts.filter( one => !one.status.includes('dormant'))
             else if (cases === 'old')
@@ -40,10 +40,16 @@ export default function Home ({ navigation }) {
         setLoader(false)
     } ,[cases,posts])
 
+    let _timeOutId;
+
     const cassesHandler = (casse) => Promise.resolve(setCases(casse)).then(() => setModal(!showModal))
 
+    const closeModal = () => { 
+        if(showModal)
+        setModal(!showModal) 
+    }
     return (
-        <TouchableWithoutFeedback onPress={()=>{ if(showModal)setModal(!showModal) }}>
+        <TouchableWithoutFeedback onPress={closeModal}>
             <View style={styles.screen}>
                 <StatusBar style="dark" />
                 <View style={globalStyles.safeAreaView}/>

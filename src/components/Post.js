@@ -1,7 +1,6 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { LinearGradient } from 'expo-linear-gradient'
 import React, { useRef } from 'react'
-import { StyleSheet, Text, View,Dimensions, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, Dimensions, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { colors } from '../helpers/colors'
 import env from '../helpers/env'
 import { globalStyles } from '../helpers/styles'
@@ -25,7 +24,7 @@ export default function Post({ navigation,data,isLast }) {
             <Image ref={imageRef} source={{ uri:imageUri() }} style={styles.image} />
             <Text numberOfLines={2} style={styles.name}>{data.name}</Text>
             <ActivityIndicator />
-            <Text numberOfLines={1} style={[styles.content,{ backgroundColor: data.type === 'lost' ? colors.secondary : colors.success }]}>    
+            <Text numberOfLines={1} style={[styles.content,{ backgroundColor: data.type.includes('ost') ? colors.secondary : colors.success }]}>    
                 {data.type + " "} 
                 {
                     data.status === 'active' &&

@@ -18,4 +18,13 @@ export const getAllPost = async (creds) => {
     );
 }
 
+//
+export const ChangeStatus = async (id,body) => {
+  return await Fetcher(
+      body,
+      `/posts/${id}`,
+      "PATCH"
+    );
+}
+
 
