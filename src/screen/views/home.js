@@ -16,14 +16,14 @@ const casses = [ 'all', 'recent', 'old', 'closed', 'active', 'dormant', 'lost', 
 
 export default function Home ({ navigation }) {
     const [ allPosts,setPosts ] = useState([]);
-    const { posts } = useContext(StoreContext);
+    const { posts,user } = useContext(StoreContext);
     const [ cases,setCases ] = useState(casses[0]);
     const [ showModal,setModal ] = useState(false);
     const [ loading,setLoader ] = useState(false);
 
     useEffect(()=> {
         setLoader(true)
-        if(posts[0]){
+        if( posts && posts[0]){
             let casses;
             if(cases === 'all')
                 casses = randomise(posts.filter(one => one.status === 'active'))
@@ -31,7 +31,7 @@ export default function Home ({ navigation }) {
                 casses = posts.filter( one => !one.status.includes('dormant'))
             else if (cases === 'old')
                 casses = posts.filter( one => one.status.includes('dormant'))
-            else 
+            else
                 casses = posts.filter( one => one.type.includes(cases) || one.status.includes(cases))
             setPosts(casses)
         }else{
@@ -40,56 +40,48 @@ export default function Home ({ navigation }) {
         setLoader(false)
     } ,[cases,posts])
 
-    let _timeOutId;
-
     const cassesHandler = (casse) => Promise.resolve(setCases(casse)).then(() => setModal(!showModal))
 
-    const closeModal = () => { 
-        if(showModal)
-        setModal(!showModal) 
-    }
     return (
-        <TouchableWithoutFeedback onPress={closeModal}>
-            <View style={styles.screen}>
-                <StatusBar style="dark" />
-                <View style={globalStyles.safeAreaView}/>
-                <View style={[globalStyles.flexed,{ padding:width*0.04 }]}>
-                    <Text style={styles.cases}>{cases}  Cases</Text>
-                    <TouchableOpacity onPress={()=>setModal(!showModal)} style={[globalStyles.flexed]}>
-                        <Feather color={colors.primary} name="filter" size={20} />
-                        <Text style={styles.filter}>Filter</Text>
-                    </TouchableOpacity>
-                </View>
-                {
-                    showModal &&
-                    <View style={styles.modal}>
-                        {
-                            React.Children.toArray(
-                                casses.map(
-                                    one => <Text style={[styles.casse,{ color: one === cases ? colors.mainText : colors.dimeText }]} onPress={()=>cassesHandler(one)}>{one} Cases</Text>
-                                )
-                            )
-                        }
-                    </View>
-                }
-                <View style={globalStyles.centerd}>
+        <View style={styles.screen}>
+            <StatusBar style="dark" />
+            <View style={globalStyles.safeAreaView}/>
+            <View style={[globalStyles.flexed,{ padding:width*0.04 }]}>
+                <Text style={styles.cases}>{cases}  Cases</Text>
+                <TouchableOpacity onPress={()=>setModal(!showModal)} style={[globalStyles.flexed]}>
+                    <Feather color={colors.primary} name="filter" size={20} />
+                    <Text style={styles.filter}>Filter</Text>
+                </TouchableOpacity>
+            </View>
+            {
+                showModal &&
+                <View style={styles.modal}>
                     {
-                        loading ?
-                            <ActivityIndicator /> :
-                            allPosts[0] ?
-                                <FlatList   
-                                    data={allPosts}
-                                    numColumns={2}
-                                    style={{paddingTop:10,width}}
-                                    showsVerticalScrollIndicator={false}
-                                    keyExtractor={(_,index) => index.toString()}
-                                    renderItem={({ item,index }) => <Post navigation={navigation} data={{...item,index}} isLast={index + 1 === allPosts.length} />}
-                                />:
-                                <Text style={styles.notfound}> No {cases} cases {'\n'} Found </Text>
+                        React.Children.toArray(
+                            casses.map(
+                                one => <Text style={[styles.casse,{ color: one === cases ? colors.mainText : colors.dimeText }]} onPress={()=>cassesHandler(one)}>{one} Cases</Text>
+                            )
+                        )
                     }
                 </View>
+            }
+            <View style={globalStyles.centerd}>
+                {
+                    loading || !user ?
+                        <ActivityIndicator color={colors.primary} size={50} /> :
+                        allPosts[0] ?
+                            <FlatList   
+                                data={allPosts}
+                                numColumns={2}
+                                style={{paddingTop:10,width}}
+                                showsVerticalScrollIndicator={false}
+                                keyExtractor={(_,index) => index.toString()}
+                                renderItem={({ item,index }) => <Post navigation={navigation} data={{...item,index}} isLast={index + 1 === allPosts.length} />}
+                            />:
+                            <Text style={styles.notfound}> No {cases} cases {'\n'} Found </Text>
+                }
             </View>
-        </TouchableWithoutFeedback>
+        </View>
     )
 }
 

@@ -25,30 +25,20 @@ export default () => {
   const { user,posts,comments,handlerContext } = useContext(StoreContext)
 
   useEffect(()=>{
-    if(!user)
-    getUserInfo()
-    .then(res => {
-      if(res.status === 200){
-        handlerContext('user',res.data)
-      }
+
+    Promise.all([
+      getAllComments(),
+      getUserInfo(),
+      getAllPost()
+    ]).then(([ cms,user,posts ]) => {
+      handlerContext('user',user.data,() => {
+        handlerContext('posts',posts.data,()=>{
+          handlerContext('comments',cms.data)
+        })
+      })
     })
 
-    if(!posts[0])
-    getAllPost()
-    .then(res => {
-      if(res.status === 200){
-        handlerContext('posts',res.data)
-      }
-    })
-
-    if(!comments[0])
-    getAllComments()
-    .then(res => {
-      if(res.status === 200){
-        handlerContext('comments',res.data)
-      }
-    })
-  },[user,posts,comments])
+  },[])
 
   return (
     <Tab.Navigator
@@ -93,7 +83,6 @@ export default () => {
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconWrapper}>
               <Feather
-                color="#fff"
                 color={focused ? colors.primary : colors.strongIcon}
                 name="search"
                 size={25}
@@ -114,7 +103,7 @@ export default () => {
         component={PostScreen}
         options={{
           headerShown,
-          tabBarLabel: "Post",
+          tabBarLabel: "",
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconWrapper}>
               <Feather
@@ -138,7 +127,7 @@ export default () => {
         component={LibraryScreen}
         options={{
           headerShown,
-          tabBarLabel: "Library",
+          tabBarLabel: "",
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconWrapper}>
               <Ionicons
@@ -162,7 +151,7 @@ export default () => {
         component={SettingsScreen}
         options={{
           headerShown,
-          tabBarLabel: "settings",
+          tabBarLabel: "",
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconWrapper}>
               <MaterialCommunityIcons
@@ -198,10 +187,5 @@ const styles = StyleSheet.create({
     ...globalStyles.shadow,
     shadowOpacity: 0.1,
     flexDirection: "column",
-    transform: [
-      {
-        translateY: Platform.OS === "ios" ? 0 : height * 0.03,
-      },
-    ],
   },
 });

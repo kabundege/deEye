@@ -1,30 +1,18 @@
-import { LinearGradient } from "expo-linear-gradient";
 import * as React from "react";
 import {
-  View,
-  Text,
   TouchableOpacity,
   Dimensions,
   StyleSheet,
+  View,
 } from "react-native";
 import { colors } from "../helpers/colors";
 import { globalStyles } from "../helpers/styles";
 
-const bgColors = [
-  "rgba(250, 250, 250, 0)",
-  "rgba(250, 250, 250, 0)",
-  "rgba(250, 250, 250,.6)",
-  "rgba(250, 250, 250,.7)",
-  "rgba(250, 250, 250, 1)",
-  "whitesmoke",
-];
+const { height,width } = Dimensions.get("screen")
 
 export default function MyTabBar({ state, descriptors, navigation }) {
   return (
-    <LinearGradient
-      colors={bgColors}
-      style={[globalStyles.flexed, styles.bottomSheet]}
-    >
+    <View style={[globalStyles.flexed, styles.bottomSheet]}  >
       {React.Children.toArray(
         state.routes.map((route, index) => {
           const { options } = descriptors[route.key];
@@ -70,24 +58,15 @@ export default function MyTabBar({ state, descriptors, navigation }) {
           );
         })
       )}
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   bottomSheet: {
-    paddingVertical: 5,
-    paddingBottom: 20,
-    width: "100%",
-    backgroundColor: "transparent",
+    width,
     borderTopWidth: 0,
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 0,
     backgroundColor:"whitesmoke",
-    ...globalStyles.shadow,
-    shadowOpacity:.5,
-    elevation:3
+    paddingVertical: height * 0.01,
   },
 });

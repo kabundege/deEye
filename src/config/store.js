@@ -14,8 +14,8 @@ class StoreProvider extends Component{
         }
     }
 
-    handlerContext = (key,value) => {
-        this.setState({ [key] : value });
+    handlerContext = (key,value,cb) => {
+        this.setState({ [key] : value },cb);
     }
 
     render(){

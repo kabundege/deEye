@@ -13,6 +13,7 @@ export default function Settings ({ navigation }) {
     const { allPosts,allComments,allViews } = creds;
 
     useEffect(()=>{
+        if(posts && comments && views)
         setCreds(() => {
             const currentPosts = posts.filter( one => one.creator_id == user?._id );
             const currentComments = comments.filter( one => one.creator_id == user?._id );

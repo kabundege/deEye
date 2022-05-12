@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native"
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native"
 import { colors } from '../../helpers/colors'
 import { globalStyles } from '../../helpers/styles'
 import InputField from '../../components/input'
@@ -52,7 +52,7 @@ const LoginScreen = ({ navigation }) => {
   return (
       <KeyboardAvoidingView behaviour={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={{ height,backgroundColor:colors.baseBg }}>
+          <ScrollView style={{ height,backgroundColor:colors.baseBg }}>
               <View style={globalStyles.safeAreaView}>
                 <TouchableOpacity 
                   onPress={()=>navigation.goBack()} 
@@ -86,10 +86,11 @@ const LoginScreen = ({ navigation }) => {
                     </Text>
                     <TouchableOpacity onPress={handlerSubmit} style={[globalStyles.btn, styles.btn]}>
                       <Text style={[globalStyles.btnText, { color: "white", fontSize: 15 }]}>
-                        {!loading ? 'SIGN IN' : <ActivityIndicator size={18} color={colors.darkText} />}
+                        {!loading ? 'SIGN IN' : <ActivityIndicator size={18} color="white" />}
                       </Text>
                     </TouchableOpacity>
                 </View>
+                <View style={globalStyles.halfSpacer} />
                 <Text style={styles.secondaryText}>
                   Don't have an account yet ? {" "}
                   <Text 
@@ -97,7 +98,7 @@ const LoginScreen = ({ navigation }) => {
                     style={styles.register}>Register</Text> 
                 </Text>
               </View>
-            </View>
+          </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
   )
@@ -127,7 +128,6 @@ const styles = StyleSheet.create({
     color:colors.lightIcon,
     fontSize:15,
     marginBottom:height*0.05,
-    marginTop:-height*0.02,
   },
   parent:{
     flex:1,

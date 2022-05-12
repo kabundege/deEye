@@ -4,8 +4,15 @@ import Constants from 'expo-constants'
 
 const { width,height } = Dimensions.get('screen')
 export const borderRadius = 15
+export const Spacing = width * 0.05
 
 export const globalStyles = StyleSheet.create({
+    spacer:{
+        margin: Spacing
+    },
+    halfSpacer:{
+        margin: Spacing/2
+    },
     divider:{
         width:"100%",
         borderBottomWidth:2,
@@ -18,7 +25,7 @@ export const globalStyles = StyleSheet.create({
         borderRadius:width*0.8,
         backgroundColor:colors.primary,
         top:-height*0.01,
-        left:-width*0.25
+        left:-width*0.3
     },
     topFadder:{
         width:'100%',
@@ -116,7 +123,7 @@ export const globalStyles = StyleSheet.create({
       fontSize:15
     },
     safeAreaView:{
-        paddingTop: Constants.statusBarHeight + 5,
-        paddingHorizontal: width*0.1,
+        paddingTop: Constants.statusBarHeight + Spacing,
+        paddingHorizontal: width    *   0.1,
     }
 })

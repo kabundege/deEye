@@ -43,49 +43,47 @@ export default function Library ({ navigation }) {
     const cassesHandler = (casse) => Promise.resolve(setCases(casse)).then(() => setModal(!showModal))
 
     return (
-        <TouchableWithoutFeedback onPress={()=>{ if(showModal)setModal(!showModal) }}>
-            <View style={styles.screen}>
-                <StatusBar style="dark" />
-                <View style={globalStyles.safeAreaView}/>
-                <View  style={globalStyles.blobCircle} />
-                <Text style={styles.mainText}>Personal {'\n'}Library .</Text>
-                <View style={[globalStyles.flexed,{ paddingHorizontal:width*0.04 }]}>
-                    <Text style={styles.cases}>{cases}  Cases</Text>
-                    <TouchableOpacity onPress={()=>setModal(!showModal)} style={[globalStyles.flexed]}>
-                        <Feather color={colors.primary} name="filter" size={20} />
-                        <Text style={styles.filter}>Filter</Text>
-                    </TouchableOpacity>
-                </View>
-                {
-                    showModal &&
-                    <View style={styles.modal}>
-                        {
-                            React.Children.toArray(
-                                casses.map(
-                                    one => <Text style={[styles.casse,{ color: one === cases ? colors.mainText : colors.dimeText }]} onPress={()=>cassesHandler(one)}>{one} Cases</Text>
-                                )
-                            )
-                        }
-                    </View>
-                }
-                <View style={globalStyles.centerd}>
+        <View style={styles.screen}>
+            <StatusBar style="dark" />
+            <View style={globalStyles.safeAreaView}/>
+            <View  style={globalStyles.blobCircle} />
+            <Text style={styles.mainText}>Personal {'\n'}Library .</Text>
+            <View style={[globalStyles.flexed,{ paddingHorizontal:width*0.04 }]}>
+                <Text style={styles.cases}>{cases}  Cases</Text>
+                <TouchableOpacity onPress={()=>setModal(!showModal)} style={[globalStyles.flexed]}>
+                    <Feather color={colors.primary} name="filter" size={20} />
+                    <Text style={styles.filter}>Filter</Text>
+                </TouchableOpacity>
+            </View>
+            {
+                showModal &&
+                <View style={styles.modal}>
                     {
-                        loading ?
-                            <ActivityIndicator /> :
-                            allPosts[0] ?
-                                <FlatList   
-                                    data={allPosts}
-                                    numColumns={2}
-                                    style={{paddingTop:10,width}}
-                                    showsVerticalScrollIndicator={false}
-                                    keyExtractor={item => item._id.toString()}
-                                    renderItem={({ item,index }) => <Post navigation={navigation} data={{...item,index}} isLast={index + 1 === allPosts.length} />}
-                                />:
-                                <Text style={styles.notfound}> No {cases} cases {'\n'} Found </Text>
+                        React.Children.toArray(
+                            casses.map(
+                                one => <Text style={[styles.casse,{ color: one === cases ? colors.mainText : colors.dimeText }]} onPress={()=>cassesHandler(one)}>{one} Cases</Text>
+                            )
+                        )
                     }
                 </View>
+            }
+            <View style={globalStyles.centerd}>
+                {
+                    loading ?
+                        <ActivityIndicator  color={colors.primary} size={50} /> :
+                        allPosts[0] ?
+                            <FlatList   
+                                data={allPosts}
+                                numColumns={2}
+                                style={{paddingTop:10,width}}
+                                showsVerticalScrollIndicator={false}
+                                keyExtractor={item => item._id.toString()}
+                                renderItem={({ item,index }) => <Post navigation={navigation} data={{...item,index}} isLast={index + 1 === allPosts.length} />}
+                            />:
+                            <Text style={styles.notfound}> No {cases} cases {'\n'} Found </Text>
+                }
             </View>
-        </TouchableWithoutFeedback>
+        </View>
     )
 }
 
@@ -123,14 +121,14 @@ const styles = StyleSheet.create({
         color:colors.dimeText
     },
     cases:{
-        fontFamily:"Bold",
+        fontFamily:"ExtraBold",
         textTransform:"capitalize",
         fontSize:20,
         color:colors.mainText
     },
     mainText:{
         fontFamily:"Black",
-        color:"lightgrey",
+        color:"whitesmoke",
         fontSize:30,
         padding:width*0.04 
     },

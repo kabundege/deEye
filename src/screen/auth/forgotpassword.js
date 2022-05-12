@@ -75,7 +75,7 @@ const ForgotScreen = ({ navigation }) => {
                   />
                   <TouchableOpacity onPress={handlerSubmit} style={[globalStyles.btn, styles.btn,{ backgroundColor: success ? colors.success : colors.primary }]}>
                     <Text style={[globalStyles.btnText,{ color: "white" , fontSize: 15 }]}>
-                      {!loading ? success ? 'Done' : 'SUBMIT' : <ActivityIndicator size={18} color={colors.darkText} />}
+                      {!loading ? success ? 'Done' : 'SUBMIT' : <ActivityIndicator size={18} color='white' />}
                     </Text>
                   </TouchableOpacity>
               </View>

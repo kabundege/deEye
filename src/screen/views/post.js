@@ -10,13 +10,14 @@ import { createPost } from '../../API/posts';
 import { StatusBar } from 'expo-status-bar'
 import { SimpleNotification } from '../../components/alert';
 import Fetch from "node-fetch";
+import axios from 'axios'
 
 const { height,width } = Dimensions.get("screen")
 
 const genders = [ 'male',"female" ]
 const types = [ 'lost',"found" ]
 
-const createFormData = (image, body = {}) => {
+const createFormData = (image, body ) => {
     const data = new FormData();
   
     data.append('image', {
@@ -24,10 +25,10 @@ const createFormData = (image, body = {}) => {
       type: image.type || "jpg",
       uri: Platform.OS === 'ios' ? image.uri.replace('file://', '') : image.uri,
     });
-  
-    Object.keys(body).forEach((key) => {
-      data.append(key, body[key]);
-    });
+
+    for(const [key,value] of Object.entries(body)){
+        data.append(key,value)
+    }
   
     return data;
   };
@@ -74,27 +75,32 @@ export default function Post() {
         } 
     }
 
-    const upload = () => {
+    const upload = async () => {
         if(
             image && type && types.indexOf(String(type).toLowerCase()) !== -1
         ){
-            const {  phone_number } = user;
+            const { phone_number } = user;
             const newCase = {
                 ...creds,
-                phone_number:phoneNumber
-                }
+                phone_number: phoneNumber || phone_number
+            }
             
-            delete newCase.phoneNumber;
             setLoader(true);
             // createPost(createFormData(image,newCase))
-            Fetch('https://deeye-backend.herokuapp.com/posts',{
-                method:"POST",
-                headers:{
-                    'Accept': 'application/json',
-                    'Content-Type': 'multipart/form-data',
-                    phone_number, 
-                },
-                body:createFormData(image,newCase)
+            // Fetch('https://deeye-backend.herokuapp.com/posts',{
+            //     method: "put",
+            //     headers:{
+            //         'Accept': 'application/json',
+            //         'Content-Type': 'multipart/form-data',
+            //         phone_number, 
+            //     },
+            //     body: createFormData(image,newCase)
+            // })
+            axios({
+                method: 'post',
+                url: 'https://deeye-backend.herokuapp.com/posts',
+                data: createFormData(image,newCase),
+                headers: {'Content-Type': 'multipart/form-data' }
             })
             .then(res => res.json())
             .then(res => {
@@ -105,7 +111,10 @@ export default function Post() {
                 }else{
                     SimpleNotification('Case Posting failed',res.error,()=>{})
                 }
-            }).catch(err => setError(err.message))
+            }).catch(err => {
+                setError(err.message)
+                console.log(err)
+            })
             .finally(()=>setLoader(false))
         }else{
             setError("Missing some fields")
@@ -220,7 +229,7 @@ export default function Post() {
                 >
                     {
                         loading ?
-                            <ActivityIndicator /> :
+                            <ActivityIndicator  color="white" size={50}/> :
                             <Text style={[globalStyles.btnText,styles.btnText]}>Post</Text>
                     }
                 </TouchableOpacity>

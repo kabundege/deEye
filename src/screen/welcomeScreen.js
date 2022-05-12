@@ -38,15 +38,16 @@ const styles = StyleSheet.create({
         height:"40%",
     },
     content:{
-        fontFamily:"Regular",
-        color:colors.mainText,
+        fontFamily:"Medium",
+        color:colors.mutedText,
+        textAlign:'center',
         fontSize:20,
         marginHorizontal:'10%',
     },
     next:{
         fontFamily: "Bold",
         fontSize:20,
-        color:colors.mutedText
+        color:colors.error
     },
     btn: {
         backgroundColor: colors.primary,

@@ -91,7 +91,7 @@ const SignUpScreen = ({ navigation }) => {
 
                     <TouchableOpacity onPress={handlerSubmit} style={[globalStyles.btn, styles.btn]}>
                       <Text style={[globalStyles.btnText, { color: "white", fontSize: 15 }]}>
-                        {!loading ? 'SIGN UP' : <ActivityIndicator size={18} color={colors.darkText} />}
+                        {!loading ? 'SIGN UP' : <ActivityIndicator size={18} color={'white'} />}
                       </Text>
                     </TouchableOpacity>
                 </View>
