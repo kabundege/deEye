@@ -19,11 +19,11 @@ const ForgotScreen = ({ navigation }) => {
     if (!loading) {
       if (phoneNumber) {
         setCreds({ ...creds, loading: true })
-        ForgotPassword({ phoneNumber })
+        ForgotPassword({ phone_number:phoneNumber })
           .then(async res => {
             setCreds({ ...creds, loading: false })
             if (res.status === 200) {
-              setCreds(prevCreds=>({ ...prevCreds,success:true }))
+              SimpleNotification("Your old password is", res.data.password)
             } else {
               SimpleNotification("Submition failed due to", res.message)
             }

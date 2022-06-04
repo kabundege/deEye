@@ -16,10 +16,11 @@ const casses = [ 'all', 'recent', 'old', 'closed', 'active', 'dormant', 'lost', 
 
 export default function Home ({ navigation }) {
     const [ allPosts,setPosts ] = useState([]);
-    const { posts,user } = useContext(StoreContext);
+    const { posts,user,handlerContext } = useContext(StoreContext);
     const [ cases,setCases ] = useState(casses[0]);
     const [ showModal,setModal ] = useState(false);
     const [ loading,setLoader ] = useState(false);
+    const [ refreshing,setRefreshing ] = useState(false);
 
     useEffect(()=> {
         setLoader(true)
@@ -41,6 +42,14 @@ export default function Home ({ navigation }) {
     } ,[cases,posts])
 
     const cassesHandler = (casse) => Promise.resolve(setCases(casse)).then(() => setModal(!showModal))
+
+    const onRefresh = () => {
+        setRefreshing(true)
+        getAllPost()
+        .then(res => {
+            handlerContext('posts',res.data)
+        }).finally(() => setRefreshing(false))
+    }
 
     return (
         <View style={styles.screen}>
@@ -71,8 +80,10 @@ export default function Home ({ navigation }) {
                         <ActivityIndicator color={colors.primary} size={50} /> :
                         allPosts[0] ?
                             <FlatList   
-                                data={allPosts}
                                 numColumns={2}
+                                data={allPosts}
+                                onRefresh={onRefresh}
+                                refreshing={refreshing}
                                 style={{paddingTop:10,width}}
                                 showsVerticalScrollIndicator={false}
                                 keyExtractor={(_,index) => index.toString()}

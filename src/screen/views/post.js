@@ -11,18 +11,19 @@ import { StatusBar } from 'expo-status-bar'
 import { SimpleNotification } from '../../components/alert';
 import Fetch from "node-fetch";
 import axios from 'axios'
+import env from '../../helpers/env';
 
 const { height,width } = Dimensions.get("screen")
+const { REACT_APP_API_URL } = env
 
-const genders = [ 'male',"female" ]
 const types = [ 'lost',"found" ]
 
 const createFormData = (image, body ) => {
     const data = new FormData();
   
     data.append('image', {
-      name: image.fileName || "John Doe",
-      type: image.type || "jpg",
+      name: image.fileName || "JohnDoe.jpg",
+      type: image.type || "image/jpeg",
       uri: Platform.OS === 'ios' ? image.uri.replace('file://', '') : image.uri,
     });
 
@@ -36,10 +37,10 @@ const createFormData = (image, body ) => {
 
 export default function Post() {
     const [ creds,setCreds ] = useState({});
+    const [ error,setError ] = useState(null);
     const [ image,setPickImage ] = useState(null);
     const [ showModal,setModal ] = useState(false);
     const [ loading,setLoader ] = useState(false);
-    const [ error,setError ] = useState(null);
     const { user,posts,handlerContext } = useContext(StoreContext)
 
     const { name,age,gender,phoneNumber,description,type,complexion,location,nationality } = creds;
@@ -72,7 +73,16 @@ export default function Post() {
                 setModal(false);
                 setPickImage(result);
             }
-        } 
+        }else{
+            ImagePicker.requestCameraPermissionsAsync()
+            .then((res) => {
+                if(res.granted){
+                    captureImage()
+                }else{
+                    setModal(false)
+                }
+            })
+        }
     }
 
     const upload = async () => {
@@ -84,11 +94,14 @@ export default function Post() {
                 ...creds,
                 phone_number: phoneNumber || phone_number
             }
+
+            if(newCase.phoneNumber)
+            delete newCase.phoneNumber
             
             setLoader(true);
-            // createPost(createFormData(image,newCase))
-            // Fetch('https://deeye-backend.herokuapp.com/posts',{
-            //     method: "put",
+            createPost(createFormData(image,newCase))
+            // Fetch('http://192.168.0.105:2000/posts',{
+            //     method: "POST",
             //     headers:{
             //         'Accept': 'application/json',
             //         'Content-Type': 'multipart/form-data',
@@ -98,22 +111,27 @@ export default function Post() {
             // })
             axios({
                 method: 'post',
-                url: 'https://deeye-backend.herokuapp.com/posts',
+                // url: 'https://deeye-backend.herokuapp.com/posts',
+                timeout:10000,
                 data: createFormData(image,newCase),
-                headers: {'Content-Type': 'multipart/form-data' }
+                url: `${REACT_APP_API_URL}/posts`,
+                headers:{
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    phone_number, 
+                },
             })
-            .then(res => res.json())
+            // .then(res => res.json())
             .then(res => {
                 if(res.status === 201){
                     handlerContext('posts',[ res.data,...posts ])
-                    setCreds({})
                     setPickImage(null)
+                    setCreds({})
                 }else{
                     SimpleNotification('Case Posting failed',res.error,()=>{})
                 }
             }).catch(err => {
                 setError(err.message)
-                console.log(err)
             })
             .finally(()=>setLoader(false))
         }else{
