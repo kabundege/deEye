@@ -20,16 +20,18 @@ export default function Search ({ navigation }) {
     useEffect(()=>{
         if(query){
             setLoader(true)
-            const newResults = posts.filter( one => 
-                one.description.includes(query) || 
-                String(one.age).includes(query) || 
-                one.name.includes(query) || 
-                String(one.phoneNumber).includes(query) ||
-                one.complexion.includes(query) ||
-                one.nationality.includes(query) ||
-                one.location.includes(query) 
+            const newResults = posts.filter( one => {
+                    let match = false;
+
+                    for(const field of Object.values(one)){
+                        if(String(field).toLowerCase().includes(query.toLowerCase())){
+                            match = true
+                        }
+                    }
+
+                    return match;
+                }
             )
-    
             Promise.resolve(setResults(newResults))
             .then(() => setLoader(false))
         }
